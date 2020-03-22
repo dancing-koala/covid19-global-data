@@ -1,5 +1,6 @@
 package com.dancing_koala.covid_19data
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -7,43 +8,32 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.maps.android.clustering.ClusterManager
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.android.synthetic.main.activity_home.*
 
-class MainActivity : AppCompatActivity(), OnMapReadyCallback {
+class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
 
-    private var dailyReportList = listOf<DailyReport>()
+    private val worldData = DataStorage.instance.data
     private var googleMap: GoogleMap? = null
     private var clusterManager: ClusterManager<ReportClusterItem>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_home)
 
         val mapFragment: SupportMapFragment? = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
 
-        val repository = RemoteDataRepository()
-
-        CoroutineScope(Dispatchers.Main).launch {
-            dailyReportList = repository.getLastDailyReport()
-
-            var confirmed = 0
-            var deaths = 0
-            var recovered = 0
-
-            dailyReportList.forEach {
-                confirmed += it.confirmed
-                deaths += it.deaths
-                recovered += it.recovered
-            }
-
-            updateCounters("Worldwide", "", confirmed, deaths, recovered)
-
-            updateData()
+        graphButton.setOnClickListener {
+            goToGraphScreen()
         }
+
+        val worldwide = worldData.first { it.localId == 0 }
+        updateCounters(worldwide.country, "", worldwide.confirmed, worldwide.deaths, worldwide.recovered)
+        updateData()
+    }
+
+    private fun goToGraphScreen() {
+        startActivity(Intent(this, GraphActivity::class.java))
     }
 
     override fun onResume() {
@@ -55,7 +45,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         map?.let { nnMap ->
 
             googleMap = nnMap
-
 
             clusterManager = ClusterManager<ReportClusterItem>(this, nnMap).apply {
                 renderer = ReportClusterRenderer(applicationContext, nnMap, this)
@@ -88,7 +77,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun updateData() {
         googleMap?.let {
             if (clusterManager?.markerCollection?.markers?.isEmpty() != false) {
-                dailyReportList.forEach { report ->
+                worldData.forEach { report ->
                     clusterManager?.addItem(ReportClusterItem(report))
                 }
             }

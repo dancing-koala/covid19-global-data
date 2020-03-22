@@ -1,4 +1,4 @@
-package com.dancing_koala.covid_19data
+package com.dancing_koala.covid_19data.network
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -26,7 +26,7 @@ class JHUGithubService {
                 .url(url)
                 .cacheControl(
                     CacheControl.Builder()
-                        .maxAge(12, TimeUnit.HOURS)
+                        .maxAge(1, TimeUnit.HOURS)
                         .build()
                 )
                 .build()
@@ -62,9 +62,9 @@ class JHUGithubService {
     sealed class Result(val responseCode: Int) {
         class Success(responseCode: Int, val data: String) : Result(responseCode)
         sealed class Error(responseCode: Int, val url: String) : Result(responseCode) {
-            class HttpClientError(responseCode: Int, url: String) : Result.Error(responseCode, url)
-            class HttpServerError(responseCode: Int, url: String) : Result.Error(responseCode, url)
-            class UnknownError(url: String, val throwable: Throwable) : Result.Error(-1, url)
+            class HttpClientError(responseCode: Int, url: String) : Error(responseCode, url)
+            class HttpServerError(responseCode: Int, url: String) : Error(responseCode, url)
+            class UnknownError(url: String, val throwable: Throwable) : Error(-1, url)
         }
     }
 }

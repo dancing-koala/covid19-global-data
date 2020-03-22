@@ -8,4 +8,15 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppTheme.NoActionBarScreen" parent="Theme.AppCompat.Light.NoActionBar" />
+
+    <style name="AppTheme.SplashScreen" parent="AppTheme.NoActionBarScreen" />
+
+    <style name="AppTheme.HomeScreen" parent="AppTheme.NoActionBarScreen" />
+
+    <style name="AppTheme.SplashScreen.Text" parent="TextAppearance.AppCompat.Body2">
+        <item name="android:textColor">@color/headline</item>
+        <item name="android:textSize">@dimen/splashscreen_text_size</item>
+    </style>
+
 </resources>

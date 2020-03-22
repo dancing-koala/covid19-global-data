@@ -1,5 +1,8 @@
-package com.dancing_koala.covid_19data
+package com.dancing_koala.covid_19data.network
 
+import com.dancing_koala.covid_19data.data.CsvDataParser
+import com.dancing_koala.covid_19data.data.DailyReport
+import com.dancing_koala.covid_19data.data.StateTimeSeries
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.*
@@ -38,13 +41,17 @@ class RemoteDataRepository() {
         return@withContext listOf<StateTimeSeries>()
     }
 
-    suspend fun getLastDailyReport(): List<DailyReport> = withContext(Dispatchers.IO) {
+    suspend fun getLastDailyReports(): List<DailyReport> = withContext(Dispatchers.IO) {
         val cal = Calendar.getInstance()
-        cal.add(Calendar.DATE, -1)
+        var result: JHUGithubService.Result? = null
 
-        val result = service.fetchDailyReportData(
-            cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DATE)
-        )
+        while (result == null || result.responseCode == 404) {
+            cal.add(Calendar.DATE, -1)
+
+            result = service.fetchDailyReportData(
+                cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DATE)
+            )
+        }
 
         if (result is JHUGithubService.Result.Success) {
             return@withContext csvDataParser.parseDailyReportCsv(result.data)

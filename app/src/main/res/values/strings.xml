@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Covid-19 Data</string>
+    <string name="fetching_current_data">Fetching current data</string>
+    <string name="fetching_confirmed_time_series">Fetching confirmed time series</string>
+    <string name="fetching_deaths_time_series">Fetching deaths time series</string>
+    <string name="fetching_recovered_time_series">Fetching recovered time series</string>
+    <string name="processing_data">Processing data...</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.dancing_koala.covid_19data
 
+import com.dancing_koala.covid_19data.network.JHUGithubService
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue

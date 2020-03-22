@@ -1,5 +1,8 @@
 package com.dancing_koala.covid_19data
 
+import com.dancing_koala.covid_19data.data.CsvDataParser
+import com.dancing_koala.covid_19data.data.DailyReport
+import com.dancing_koala.covid_19data.data.StateTimeSeries
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before

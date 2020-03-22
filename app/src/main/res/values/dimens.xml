@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="base_margin">16dp</dimen>
     <dimen name="base_margin_xs">8dp</dimen>
+    <dimen name="base_margin">16dp</dimen>
+    <dimen name="base_margin_xl">24dp</dimen>
+    <dimen name="base_margin_xxl">72dp</dimen>
 
     <dimen name="base_map_marker_size">40dp</dimen>
+    <dimen name="base_list_item_height">56dp</dimen>
+
+    <dimen name="icon_refresh_size">32dp</dimen>
+    <dimen name="splashscreen_text_size">18sp</dimen>
 </resources>

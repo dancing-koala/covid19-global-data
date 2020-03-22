@@ -12,13 +12,21 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".SplashActivity"
+            android:theme="@style/AppTheme.SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".HomeActivity"
+            android:theme="@style/AppTheme.HomeScreen" />
+
+        <activity android:name=".GraphActivity" />
+        <activity android:name=".ItemSelectionActivity" />
 
         <meta-data
             android:name="com.google.android.gms.version"

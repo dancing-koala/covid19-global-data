@@ -1,4 +1,4 @@
-package com.dancing_koala.covid_19data
+package com.dancing_koala.covid_19data.data
 
 import com.dancing_koala.covid_19data.fastcsv.reader.CsvReader
 import java.io.Reader
@@ -16,7 +16,7 @@ class CsvDataParser {
         val csvContainer = csvReader.read(reader)
         val csvRows = csvContainer.rows
 
-        val headersRow = csvRows.first()
+        val headersRow = csvRows.first().fields
 
         val result = mutableListOf<StateTimeSeries>()
 
@@ -25,7 +25,7 @@ class CsvDataParser {
             val perDayData = hashMapOf<String, Int>()
 
             for (i in 4 until row.fieldCount) {
-                val date = headersRow.getField(i)
+                val date = headersRow[i]
                 perDayData[date] = row.getField(i).toIntOrNull() ?: -1
             }
 

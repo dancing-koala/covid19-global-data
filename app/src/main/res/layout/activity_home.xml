@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".HomeActivity">
 
     <fragment
         android:id="@+id/map"
@@ -15,11 +15,11 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         android:background="@android:color/white"
         android:orientation="vertical"
         android:padding="@dimen/base_margin"
-        app:behavior_hideable="false"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+        app:behavior_hideable="false">
 
         <TextView
             android:id="@+id/locationCountTextView"
@@ -27,6 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/base_margin_xs"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+            android:textColor="@color/stroke"
             tools:text="Worldwide" />
 
         <TextView
@@ -34,7 +35,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="#FFC61E"
+            android:textColor="@color/highlight"
             tools:text="Confirmed 123" />
 
         <TextView
@@ -42,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="#00CD6C"
+            android:textColor="@color/secondary"
             tools:text="Recovered 123" />
 
         <TextView
@@ -50,10 +51,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="#FF1F5B"
+            android:textColor="@color/tertiary"
             tools:text="Death 123" />
-
-
     </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/graphButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/base_margin"
+        app:srcCompat="@drawable/ic_chart" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
