@@ -2,7 +2,6 @@ package com.dancing_koala.covid_19data.dataviz
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,8 +14,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.dancing_koala.covid_19data.DataStorage
 import com.dancing_koala.covid_19data.ItemSelectionActivity
 import com.dancing_koala.covid_19data.R
-import com.dancing_koala.covid_19data.android.SimpleChipAdapter
-import com.dancing_koala.covid_19data.android.SimpleChipItem
+import com.dancing_koala.covid_19data.android.ColoredChipAdapter
+import com.dancing_koala.covid_19data.android.ColoredChipItem
+import com.dancing_koala.covid_19data.core.Color
+import com.dancing_koala.covid_19data.core.ColorPool
 import com.dancing_koala.covid_19data.data.DataCategory
 import com.dancing_koala.covid_19data.data.StateData
 import com.github.mikephil.charting.components.XAxis
@@ -25,19 +26,20 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
 import kotlinx.android.synthetic.main.activity_dataviz.*
-import kotlin.math.min
 
-class DatavizActivity : AppCompatActivity(), SimpleChipAdapter.Callback {
+class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
     companion object {
         const val SELECTION_REQUEST_CODE = 123
     }
 
-
     private val worldData = DataStorage.instance.data
 
-    private val lineColors = listOf("#AF4BCE", "#DB4CB2", "#EB548C", "#EA7369").shuffled().toTypedArray()
-    private val simpleChipAdapter = SimpleChipAdapter()
-    private val selectedSubjects = mutableListOf<StateData>()
+    private val colorPool = ColorPool(
+        listOf("#1DE5BC", "#EA7369", "#EABD3C", "#C02223").reversed()
+    )
+
+    private val simpleChipAdapter = ColoredChipAdapter()
+    private val selectedSubjects = mutableListOf<DatavizSubject>()
     private var currentDataCategory = DataCategory.CONFIRMED
 
     private val selectableItems: ArrayList<ItemSelectionActivity.SelectableItem> by lazy {
@@ -74,9 +76,7 @@ class DatavizActivity : AppCompatActivity(), SimpleChipAdapter.Callback {
         graphLineChart.description?.isEnabled = false
         graphLineChart.isAutoScaleMinMaxEnabled = true
         graphLineChart.data = LineData()
-        graphLineChart.legend.apply {
-
-        }
+        graphLineChart.legend.isEnabled = false
 
         graphLineChart.xAxis.apply {
             setDrawLabels(true)
@@ -90,7 +90,7 @@ class DatavizActivity : AppCompatActivity(), SimpleChipAdapter.Callback {
             axisMinimum = 0f
         }
 
-        val world = worldData.first { it.country == "Worldwide" }
+        val world = worldData.first { it.localId == 0 }
         onStateDataSelected(world)
     }
 
@@ -111,53 +111,51 @@ class DatavizActivity : AppCompatActivity(), SimpleChipAdapter.Callback {
         }
     }
 
-    override fun onChipCloseClick(simpleChipItem: SimpleChipItem) {
-        simpleChipAdapter.removeChip(simpleChipItem)
+    override fun onChipCloseClick(coloredChipItem: ColoredChipItem) {
+        simpleChipAdapter.removeChip(coloredChipItem)
         val subject = selectedSubjects.first {
-            it.localId == simpleChipItem.id
+            it.stateData.localId == coloredChipItem.id
         }
         selectedSubjects.remove(subject)
-        onDataCategorySelected(currentDataCategory)
+        colorPool.recycleColor(subject.associatedColor)
     }
 
     private fun onStateDataSelected(data: StateData) {
-        selectedSubjects.add(data)
-        simpleChipAdapter.addChip(data.toSimpleChipItem())
-        onDataCategorySelected(currentDataCategory)
+        colorPool.takeColor()?.let { color ->
+            val subject = DatavizSubject(data, color)
+            selectedSubjects.add(subject)
+            simpleChipAdapter.addChip(data.toSimpleChipItem(color))
+            updateChartData()
+        }
     }
 
     private fun onDataCategorySelected(dataCategory: DataCategory) {
         currentDataCategory = dataCategory
-
-        graphLineChart.data.clearValues()
-
-        selectedSubjects.forEachIndexed { index, stateData ->
-            val data = when (dataCategory) {
-                DataCategory.CONFIRMED -> stateData.confirmedPerDayData
-                DataCategory.RECOVERED -> stateData.recoveredPerDayData
-                DataCategory.DEATHS    -> stateData.deathsPerDayData
-            }
-            val colorIndex = min(lineColors.lastIndex, index)
-            val colorHex = lineColors[colorIndex]
-
-            displayTimeSeriesDataSet(stateData.fullLabel, colorHex, data)
-        }
+        updateChartData()
     }
 
+    private fun updateChartData() {
+        graphLineChart.data.clearValues()
 
-    private fun displayTimeSeriesDataSet(dataSetLabel: String, colorHex: String, dataSet: HashMap<String, Int>) {
-        val entries = dataSet.toChartEntries()
+        selectedSubjects.forEach { subject ->
+            val entries = when (currentDataCategory) {
+                DataCategory.CONFIRMED -> subject.stateData.confirmedPerDayData
+                DataCategory.RECOVERED -> subject.stateData.recoveredPerDayData
+                DataCategory.DEATHS    -> subject.stateData.deathsPerDayData
+            }.toChartEntries()
 
-        val lineDataSet = LineDataSet(entries, dataSetLabel).apply {
-            color = Color.parseColor(colorHex)
-            setDrawCircles(false)
-            setDrawValues(false)
+            val lineDataSet = LineDataSet(entries, subject.stateData.fullLabel).apply {
+                color = subject.associatedColor.intValue
+                setDrawCircles(false)
+                setDrawValues(false)
 
-            lineWidth = 2f
+                lineWidth = 2f
+            }
+
+            graphLineChart.data.addDataSet(lineDataSet)
         }
 
-        graphLineChart.data.addDataSet(lineDataSet)
-        updateGraph()
+        graphLineChart.invalidate()
     }
 
     private fun showSelectionScreen() {
@@ -166,10 +164,6 @@ class DatavizActivity : AppCompatActivity(), SimpleChipAdapter.Callback {
         }
 
         startActivityForResult(intent, SELECTION_REQUEST_CODE)
-    }
-
-    private fun updateGraph() {
-        graphLineChart.invalidate()
     }
 
     private fun HashMap<String, Int>.toChartEntries(): List<Entry> {
@@ -181,7 +175,8 @@ class DatavizActivity : AppCompatActivity(), SimpleChipAdapter.Callback {
     private fun StateData.toSelectableItem(): ItemSelectionActivity.SelectableItem =
         ItemSelectionActivity.SelectableItem(localId, fullLabel)
 
-    private fun StateData.toSimpleChipItem(): SimpleChipItem = SimpleChipItem(localId, fullLabel)
+    private fun StateData.toSimpleChipItem(backgroundColor: Color): ColoredChipItem =
+        ColoredChipItem(localId, fullLabel, backgroundColor)
 
     private class DataCategorySpinnerAdapter : BaseAdapter() {
         private val items = DataCategory.values()

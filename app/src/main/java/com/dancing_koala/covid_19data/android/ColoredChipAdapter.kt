@@ -1,23 +1,25 @@
 package com.dancing_koala.covid_19data.android
 
+import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.dancing_koala.covid_19data.R
+import com.dancing_koala.covid_19data.core.Color
 import com.google.android.material.chip.Chip
 
 
-class SimpleChipAdapter : RecyclerView.Adapter<SimpleChipAdapter.Holder>() {
+class ColoredChipAdapter : RecyclerView.Adapter<ColoredChipAdapter.Holder>() {
 
-    private val data = mutableListOf<SimpleChipItem>()
+    private val data = mutableListOf<ColoredChipItem>()
 
     var callback: Callback? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val holder = Holder(LayoutInflater.from(parent.context).inflate(R.layout.item_dataviz_subject, parent, false))
         holder.chip.setOnCloseIconClickListener {
-            callback?.onChipCloseClick(simpleChipItem = data[holder.currentPosition])
+            callback?.onChipCloseClick(coloredChipItem = data[holder.currentPosition])
         }
         return holder
     }
@@ -25,18 +27,21 @@ class SimpleChipAdapter : RecyclerView.Adapter<SimpleChipAdapter.Holder>() {
     override fun getItemCount(): Int = data.size
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        holder.chip.text = data[position].label
+        val item = data[position]
+
+        holder.chip.chipBackgroundColor = ColorStateList.valueOf(item.backgroundColor.intValue)
+        holder.chip.text = item.label
         holder.currentPosition = position
     }
 
-    fun addChip(simpleChipItem: SimpleChipItem) {
-        data.add(simpleChipItem)
+    fun addChip(coloredChipItem: ColoredChipItem) {
+        data.add(coloredChipItem)
         notifyItemInserted(data.lastIndex)
     }
 
-    fun removeChip(simpleChipItem: SimpleChipItem) {
-        val itemIndex = data.indexOf(simpleChipItem)
-        data.remove(simpleChipItem)
+    fun removeChip(coloredChipItem: ColoredChipItem) {
+        val itemIndex = data.indexOf(coloredChipItem)
+        data.remove(coloredChipItem)
         notifyItemRemoved(itemIndex)
     }
 
@@ -46,8 +51,8 @@ class SimpleChipAdapter : RecyclerView.Adapter<SimpleChipAdapter.Holder>() {
     }
 
     interface Callback {
-        fun onChipCloseClick(simpleChipItem: SimpleChipItem)
+        fun onChipCloseClick(coloredChipItem: ColoredChipItem)
     }
 }
 
-data class SimpleChipItem(val id: Int, val label: String)
+data class ColoredChipItem(val id: Int, val label: String, val backgroundColor: Color)
