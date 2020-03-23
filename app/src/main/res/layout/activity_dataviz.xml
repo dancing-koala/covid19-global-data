@@ -4,31 +4,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     android:padding="@dimen/base_margin">
 
     <Button
-        android:id="@+id/graphFirstDataSetNameButton"
+        android:id="@+id/datavizAddDataButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/base_margin"
-        app:layout_constraintHorizontal_bias="1"
+        android:text="Add data"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="A" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Spinner
         android:id="@+id/graphDataCategorySpinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/base_margin"
+        app:layout_constraintBottom_toBottomOf="@id/datavizAddDataButton"
+        app:layout_constraintStart_toEndOf="@id/datavizAddDataButton"
+        app:layout_constraintTop_toTopOf="@id/datavizAddDataButton" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/graphSubjectSlider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/base_margin"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/graphFirstDataSetNameButton" />
+        app:layout_constraintTop_toBottomOf="@id/datavizAddDataButton"
+        tools:listitem="@layout/item_dataviz_subject" />
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/graphLineChart"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/graphDataCategorySpinner" />
+        app:layout_constraintTop_toBottomOf="@id/graphSubjectSlider" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

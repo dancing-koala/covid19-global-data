@@ -25,7 +25,7 @@
             android:name=".HomeActivity"
             android:theme="@style/AppTheme.HomeScreen" />
 
-        <activity android:name=".GraphActivity" />
+        <activity android:name=".dataviz.DatavizActivity" />
         <activity android:name=".ItemSelectionActivity" />
 
         <meta-data

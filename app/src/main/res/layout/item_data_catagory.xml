@@ -3,6 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/TextAppearance.MaterialComponents.Subtitle1"
     android:layout_width="match_parent"
-    tools:text="Confirmed"
     android:layout_height="wrap_content"
-    android:padding="@dimen/base_margin_xs" />
+    android:padding="@dimen/base_margin_xs"
+    tools:text="Confirmed" />

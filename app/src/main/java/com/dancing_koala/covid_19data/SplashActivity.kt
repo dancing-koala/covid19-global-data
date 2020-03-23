@@ -8,6 +8,7 @@ import android.view.animation.LinearInterpolator
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.dancing_koala.covid_19data.data.DataTransformer
+import com.dancing_koala.covid_19data.dataviz.DatavizActivity
 import com.dancing_koala.covid_19data.network.RemoteDataRepository
 import kotlinx.android.synthetic.main.activity_splash.*
 import kotlinx.coroutines.CoroutineScope
@@ -87,7 +88,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun goToMapScreen() {
-        startActivity(Intent(this, HomeActivity::class.java))
+        startActivity(Intent(this, DatavizActivity::class.java))
         finish()
     }
 }

@@ -3,6 +3,7 @@ package com.dancing_koala.covid_19data
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.dancing_koala.covid_19data.dataviz.DatavizActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -23,8 +24,8 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment: SupportMapFragment? = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
 
-        graphButton.setOnClickListener {
-            goToGraphScreen()
+        datavizButton.setOnClickListener {
+            goToDatavizScreen()
         }
 
         val worldwide = worldData.first { it.localId == 0 }
@@ -32,8 +33,8 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
         updateData()
     }
 
-    private fun goToGraphScreen() {
-        startActivity(Intent(this, GraphActivity::class.java))
+    private fun goToDatavizScreen() {
+        startActivity(Intent(this, DatavizActivity::class.java))
     }
 
     override fun onResume() {
