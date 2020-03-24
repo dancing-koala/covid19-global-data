@@ -5,7 +5,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
-import com.dancing_koala.covid_19data.data.AreaData
+import com.dancing_koala.covid_19data.data.ReportDataSet
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
@@ -88,12 +88,12 @@ class ReportClusterRenderer(appContext: Context, map: GoogleMap, clusterManager:
     }
 }
 
-class ReportClusterItem(val report: AreaData) : ClusterItem {
+class ReportClusterItem(val report: ReportDataSet) : ClusterItem {
 
-    private val title = report.country
-    private val latLng = LatLng(report.latitude, report.longitude)
+    private val title = report.country.name
+    private val latLng = LatLng(report.country.latitude, report.country.longitude)
 
-    val count = report.confirmed
+    val count = report.cases
 
     override fun getSnippet(): String = ""
 

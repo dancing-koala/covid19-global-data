@@ -53,7 +53,7 @@ data class Country(
     val longitude: Double
 )
 
-data class DataSet(
+data class ReportDataSet(
     val id: Int,
     val country: Country,
     val cases: Int,
@@ -65,7 +65,5 @@ data class DataSet(
     val active: Int,
     val critical: Int,
     val casesPerOneMillion: Int,
-    val casesTimeLine: HashMap<String, Int>,
-    val deathsTimeLine: HashMap<String, Int>,
-    val recoveredTimeLine: HashMap<String, Int>
+    val deathsPerOneMillion: Int
 )

@@ -23,7 +23,7 @@
         </activity>
 
         <activity
-            android:name=".HomeActivity"
+            android:name=".home.HomeActivity"
             android:theme="@style/AppTheme.HomeScreen" />
 
         <activity android:name=".dataviz.DatavizActivity" />

@@ -6,11 +6,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.dancing_koala.covid_19data.DataStorage
-import com.dancing_koala.covid_19data.data.DataTransformer
-import com.dancing_koala.covid_19data.network.jhu.JHURemoteDataRepository
-import kotlinx.coroutines.Dispatchers
+import com.dancing_koala.covid_19data.network.lmaoninja.LmaoNinjaApiRemoteDataRepository
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class SplashViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -18,46 +15,22 @@ class SplashViewModel(application: Application) : AndroidViewModel(application) 
     val viewStateLiveData: LiveData<ViewState>
         get() = internalViewStateLiveData
 
-    private val remoteDataRepository = JHURemoteDataRepository()
+    private val remoteDataRepository = LmaoNinjaApiRemoteDataRepository()
 
     fun start() {
         viewModelScope.launch {
-            val dailyReports = remoteDataRepository.getLastDailyReports()
-            internalViewStateLiveData.value = ViewState.StopAnimation.CurrentData
+            val countriesData = remoteDataRepository.getCountriesData()
 
-            val confirmedTimeSeries = remoteDataRepository.getConfirmedTimeSeries()
-            internalViewStateLiveData.value = ViewState.StopAnimation.ConfirmedTimeSeries
+            internalViewStateLiveData.value = ViewState.StopAnimation
 
-            val deathsTimeSeries = remoteDataRepository.getDeathsTimeSeries()
-            internalViewStateLiveData.value = ViewState.StopAnimation.DeathsTimeSeries
-
-            val recoveredTimeSeries = remoteDataRepository.getRecoveredTimeSeries()
-            internalViewStateLiveData.value = ViewState.StopAnimation.RecoveredTimeSeries
-
-
-            internalViewStateLiveData.value = ViewState.ShowProcessingData
-
-            val processedData = withContext(Dispatchers.Default) {
-                DataTransformer().transform(
-                    dailyReports, confirmedTimeSeries, deathsTimeSeries, recoveredTimeSeries
-                )
-            }
-
-            DataStorage.instance.updateData(processedData)
+            DataStorage.instance.updateCountriesData(countriesData)
 
             internalViewStateLiveData.value = ViewState.GoToMapScreen
         }
     }
 
     sealed class ViewState {
-        sealed class StopAnimation : ViewState() {
-            object CurrentData : StopAnimation()
-            object ConfirmedTimeSeries : StopAnimation()
-            object DeathsTimeSeries : StopAnimation()
-            object RecoveredTimeSeries : StopAnimation()
-        }
-
-        object ShowProcessingData : ViewState()
+        object StopAnimation : ViewState()
         object GoToMapScreen : ViewState()
     }
 }

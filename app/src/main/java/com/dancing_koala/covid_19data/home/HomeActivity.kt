@@ -1,8 +1,12 @@
-package com.dancing_koala.covid_19data
+package com.dancing_koala.covid_19data.home
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.dancing_koala.covid_19data.DataStorage
+import com.dancing_koala.covid_19data.R
+import com.dancing_koala.covid_19data.ReportClusterItem
+import com.dancing_koala.covid_19data.ReportClusterRenderer
 import com.dancing_koala.covid_19data.dataviz.DatavizActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -13,9 +17,9 @@ import kotlinx.android.synthetic.main.activity_home.*
 
 class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
 
-    private val worldData = DataStorage.instance.data
+    private val worldData = DataStorage.instance.countriesData
     private var googleMap: GoogleMap? = null
-    private var clusterManager: ClusterManager<ReportClusterItem>? = null
+    private lateinit var clusterManager: ClusterManager<ReportClusterItem>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,14 +32,11 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
             goToDatavizScreen()
         }
 
-        val worldwide = worldData.first { it.localId == 0 }
-        updateCounters(worldwide.country, "", worldwide.confirmed, worldwide.deaths, worldwide.recovered)
-        updateData()
+        val worldwide = worldData.first { it.id == 0 }
+        updateCounters(worldwide.country.name, "", worldwide.cases, worldwide.deaths, worldwide.recovered)
     }
 
-    private fun goToDatavizScreen() {
-        startActivity(Intent(this, DatavizActivity::class.java))
-    }
+    private fun goToDatavizScreen() = startActivity(Intent(this, DatavizActivity::class.java))
 
     override fun onResume() {
         super.onResume()
@@ -44,7 +45,6 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap?) {
         map?.let { nnMap ->
-
             googleMap = nnMap
 
             clusterManager = ClusterManager<ReportClusterItem>(this, nnMap).apply {
@@ -54,9 +54,9 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 setOnClusterItemClickListener {
                     updateCounters(
-                        it.report.country,
-                        it.report.state,
-                        it.report.confirmed,
+                        it.report.country.name,
+                        "",
+                        it.report.cases,
                         it.report.deaths,
                         it.report.recovered
                     )
@@ -76,14 +76,19 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun updateData() {
-        googleMap?.let {
-            if (clusterManager?.markerCollection?.markers?.isEmpty() != false) {
-                worldData.forEach { report ->
-                    clusterManager?.addItem(ReportClusterItem(report))
+        if (googleMap == null) {
+            return
+        }
+
+        if (clusterManager.markerCollection?.markers?.isEmpty() != false) {
+
+
+            worldData.forEach { report ->
+                if (report.country.latitude != Double.NaN) {
+                    clusterManager.addItem(ReportClusterItem(report))
                 }
             }
-
-            clusterManager?.cluster()
+            clusterManager.cluster()
         }
     }
 

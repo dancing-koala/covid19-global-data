@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -17,8 +18,8 @@ import com.dancing_koala.covid_19data.android.ColoredChipAdapter
 import com.dancing_koala.covid_19data.android.ColoredChipItem
 import com.dancing_koala.covid_19data.core.Color
 import com.dancing_koala.covid_19data.core.ColorPool
-import com.dancing_koala.covid_19data.data.DataCategory
 import com.dancing_koala.covid_19data.data.AreaData
+import com.dancing_koala.covid_19data.data.DataCategory
 import com.dancing_koala.covid_19data.itemselection.ItemSelectionActivity
 import com.dancing_koala.covid_19data.itemselection.ItemSelectionBridge
 import com.dancing_koala.covid_19data.itemselection.SelectableItem
@@ -52,12 +53,17 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dataviz)
 
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setHomeButtonEnabled(true)
+        }
+
         datavizAddDataButton.setOnClickListener {
             showSelectionScreen()
         }
 
         val customValueFormatter = object : ValueFormatter() {
-            private val labels = worldData.first().confirmedPerDayData.keys.sorted()
+            private val labels = listOf<String>()
 
             override fun getFormattedValue(value: Float): String = labels[value.toInt()]
         }
@@ -91,9 +97,15 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
             enableGridDashedLine(10f, 10f, 0f)
             axisMinimum = 0f
         }
+    }
 
-        val world = worldData.first { it.localId == 0 }
-        onStateDataSelected(world)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            finish()
+            return true
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

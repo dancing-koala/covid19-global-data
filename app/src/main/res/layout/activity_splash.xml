@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    android:background="@color/colorAccent"
+    android:background="@color/primaryDark"
     tools:context=".splash.SplashActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,15 +16,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="gone">
+        tools:visibility="visible">
 
         <ImageView
             android:id="@+id/currentDataRefreshIcon"
             android:layout_width="@dimen/icon_refresh_size"
             android:layout_height="@dimen/icon_refresh_size"
             android:contentDescription="@null"
-            app:layout_constraintBottom_toTopOf="@id/timeSeriesConfirmedIcon"
-            app:layout_constraintStart_toStartOf="@id/timeSeriesConfirmedIcon"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed"
             app:srcCompat="@drawable/ic_autorenew" />
@@ -40,92 +38,7 @@
             app:layout_constraintStart_toEndOf="@id/currentDataRefreshIcon"
             app:layout_constraintTop_toTopOf="@id/currentDataRefreshIcon" />
 
-        <ImageView
-            android:id="@+id/timeSeriesConfirmedIcon"
-            android:layout_width="@dimen/icon_refresh_size"
-            android:layout_height="@dimen/icon_refresh_size"
-            android:layout_marginTop="@dimen/base_margin"
-            android:layout_marginEnd="@dimen/base_margin_xs"
-            android:contentDescription="@null"
-            app:layout_constraintBottom_toTopOf="@id/timeSeriesDeathsIcon"
-            app:layout_constraintEnd_toStartOf="@id/timeSeriesConfirmedLabel"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/currentDataRefreshIcon"
-            app:srcCompat="@drawable/ic_autorenew" />
 
-        <TextView
-            android:id="@+id/timeSeriesConfirmedLabel"
-            style="@style/AppTheme.SplashScreen.Text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/fetching_confirmed_time_series"
-            app:layout_constraintBottom_toBottomOf="@id/timeSeriesConfirmedIcon"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/timeSeriesConfirmedIcon"
-            app:layout_constraintTop_toTopOf="@id/timeSeriesConfirmedIcon" />
-
-        <ImageView
-            android:id="@+id/timeSeriesDeathsIcon"
-            android:layout_width="@dimen/icon_refresh_size"
-            android:layout_height="@dimen/icon_refresh_size"
-            android:layout_marginTop="@dimen/base_margin"
-            android:layout_marginEnd="@dimen/base_margin_xs"
-            android:contentDescription="@null"
-            app:layout_constraintBottom_toTopOf="@id/timeSeriesRecoveredIcon"
-            app:layout_constraintStart_toStartOf="@id/timeSeriesConfirmedIcon"
-            app:layout_constraintTop_toBottomOf="@id/timeSeriesConfirmedIcon"
-            app:srcCompat="@drawable/ic_autorenew" />
-
-        <TextView
-            android:id="@+id/timeSeriesDeathsLabel"
-            style="@style/AppTheme.SplashScreen.Text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/base_margin_xs"
-            android:text="@string/fetching_deaths_time_series"
-            app:layout_constraintBottom_toBottomOf="@id/timeSeriesDeathsIcon"
-            app:layout_constraintStart_toEndOf="@id/timeSeriesDeathsIcon"
-            app:layout_constraintTop_toTopOf="@id/timeSeriesDeathsIcon" />
-
-        <ImageView
-            android:id="@+id/timeSeriesRecoveredIcon"
-            android:layout_width="@dimen/icon_refresh_size"
-            android:layout_height="@dimen/icon_refresh_size"
-            android:layout_marginTop="@dimen/base_margin"
-            android:layout_marginEnd="@dimen/base_margin_xs"
-            android:contentDescription="@null"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/timeSeriesRecoveredLabel"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/timeSeriesDeathsIcon"
-            app:srcCompat="@drawable/ic_autorenew" />
-
-        <TextView
-            android:id="@+id/timeSeriesRecoveredLabel"
-            style="@style/AppTheme.SplashScreen.Text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/fetching_recovered_time_series"
-            app:layout_constraintBottom_toBottomOf="@id/timeSeriesRecoveredIcon"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/timeSeriesRecoveredIcon"
-            app:layout_constraintTop_toTopOf="@id/timeSeriesRecoveredIcon" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <TextView
-        android:id="@+id/processingDataLabel"
-        style="@style/AppTheme.SplashScreen.Text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/base_margin_xs"
-        android:text="@string/processing_data"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
