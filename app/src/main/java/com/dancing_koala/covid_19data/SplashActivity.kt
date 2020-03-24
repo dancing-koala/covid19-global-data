@@ -13,8 +13,8 @@ import com.dancing_koala.covid_19data.network.RemoteDataRepository
 import kotlinx.android.synthetic.main.activity_splash.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SplashActivity : AppCompatActivity() {
 
@@ -40,8 +40,6 @@ class SplashActivity : AppCompatActivity() {
         setContentView(R.layout.activity_splash)
 
         CoroutineScope(Dispatchers.Main).launch {
-            delay(250L)
-
             val dailyReports = remoteDataRepository.getLastDailyReports()
             stopAnimatingAndSetAsDone(currentDataRefreshIcon)
             val confirmedTimeSeries = remoteDataRepository.getConfirmedTimeSeries()
@@ -52,18 +50,16 @@ class SplashActivity : AppCompatActivity() {
             stopAnimatingAndSetAsDone(timeSeriesRecoveredIcon)
             rotationAnimator.cancel()
 
-            delay(500L)
-
             downloadIconsContainer.visibility = View.GONE
             processingDataLabel.visibility = View.VISIBLE
 
-            val processedData = DataTransformer().transform(
-                dailyReports, confirmedTimeSeries, deathsTimeSeries, recoveredTimeSeries
-            )
+            val processedData = withContext(Dispatchers.Default) {
+                DataTransformer().transform(
+                    dailyReports, confirmedTimeSeries, deathsTimeSeries, recoveredTimeSeries
+                )
+            }
 
             DataStorage.instance.updateData(processedData)
-
-            delay(500L)
 
             goToMapScreen()
         }
@@ -88,7 +84,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun goToMapScreen() {
-        startActivity(Intent(this, DatavizActivity::class.java))
+        startActivity(Intent(this, HomeActivity::class.java))
         finish()
     }
 }

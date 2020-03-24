@@ -51,22 +51,32 @@ class CsvDataParser {
         val csvContainer = csvReader.read(reader)
         val csvRows = csvContainer.rows
 
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 
         val result = mutableListOf<DailyReport>()
 
+        val colStateIndex = 2
+        val colCountryIndex = 3
+        val colLastUpdate = 4
+        val colLatitude = 5
+        val colLongitude = 6
+        val colConfirmed = 7
+        val colDeaths = 8
+        val colRecovered = 9
+        val colActive = 10
+
         for (rowIndex in 1 until csvRows.size) {
             val row = csvRows[rowIndex]
-            println(row)
             val dailyReport = DailyReport(
-                state = row.getField(0),
-                country = row.getField(1),
-                lastUpdate = dateFormat.parse(row.getField(2)) ?: Date(0L),
-                confirmed = row.getField(3).toInt(),
-                deaths = row.getField(4).toInt(),
-                recovered = row.getField(5).toInt(),
-                latitude = row.getField(6).toDouble(),
-                longitude = row.getField(7).toDouble()
+                state = row.getField(colStateIndex),
+                country = row.getField(colCountryIndex),
+                lastUpdate = dateFormat.parse(row.getField(colLastUpdate)) ?: Date(0L),
+                confirmed = row.getField(colConfirmed).toInt(),
+                deaths = row.getField(colDeaths).toInt(),
+                recovered = row.getField(colRecovered).toInt(),
+                active = row.getField(colActive).toInt(),
+                latitude = row.getField(colLatitude).toDouble(),
+                longitude = row.getField(colLongitude).toDouble()
             )
 
             result.add(dailyReport)

@@ -9,6 +9,7 @@ data class DailyReport(
     val confirmed: Int,
     val deaths: Int,
     val recovered: Int,
+    val active: Int,
     val latitude: Double,
     val longitude: Double
 )

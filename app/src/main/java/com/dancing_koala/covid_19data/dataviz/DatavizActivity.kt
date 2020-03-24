@@ -12,7 +12,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dancing_koala.covid_19data.DataStorage
-import com.dancing_koala.covid_19data.ItemSelectionActivity
 import com.dancing_koala.covid_19data.R
 import com.dancing_koala.covid_19data.android.ColoredChipAdapter
 import com.dancing_koala.covid_19data.android.ColoredChipItem
@@ -20,6 +19,9 @@ import com.dancing_koala.covid_19data.core.Color
 import com.dancing_koala.covid_19data.core.ColorPool
 import com.dancing_koala.covid_19data.data.DataCategory
 import com.dancing_koala.covid_19data.data.StateData
+import com.dancing_koala.covid_19data.itemselection.ItemSelectionActivity
+import com.dancing_koala.covid_19data.itemselection.ItemSelectionBridge
+import com.dancing_koala.covid_19data.itemselection.SelectableItem
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
@@ -42,8 +44,8 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
     private val selectedSubjects = mutableListOf<DatavizSubject>()
     private var currentDataCategory = DataCategory.CONFIRMED
 
-    private val selectableItems: ArrayList<ItemSelectionActivity.SelectableItem> by lazy {
-        worldData.map { it.toSelectableItem() } as ArrayList<ItemSelectionActivity.SelectableItem>
+    private val selectableItems: ArrayList<SelectableItem> by lazy {
+        worldData.map { it.toSelectableItem() } as ArrayList<SelectableItem>
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -118,6 +120,7 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
         }
         selectedSubjects.remove(subject)
         colorPool.recycleColor(subject.associatedColor)
+        updateChartData()
     }
 
     private fun onStateDataSelected(data: StateData) {
@@ -159,10 +162,8 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
     }
 
     private fun showSelectionScreen() {
-        val intent = Intent(this, ItemSelectionActivity::class.java).apply {
-            putExtra(ItemSelectionActivity.EXTRA_ITEMS, selectableItems)
-        }
-
+        ItemSelectionBridge.items = selectableItems
+        val intent = Intent(this, ItemSelectionActivity::class.java)
         startActivityForResult(intent, SELECTION_REQUEST_CODE)
     }
 
@@ -172,8 +173,7 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
         }
     }
 
-    private fun StateData.toSelectableItem(): ItemSelectionActivity.SelectableItem =
-        ItemSelectionActivity.SelectableItem(localId, fullLabel)
+    private fun StateData.toSelectableItem(): SelectableItem = SelectableItem(localId, fullLabel)
 
     private fun StateData.toSimpleChipItem(backgroundColor: Color): ColoredChipItem =
         ColoredChipItem(localId, fullLabel, backgroundColor)
