@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">@color/paragraph</color>
-    <color name="colorPrimaryDark">@color/background</color>
-    <color name="colorAccent">@color/highlight</color>
+    <color name="colorPrimary">#9C27B0</color>
+    <color name="colorPrimaryDark">#7B1FA2</color>
+    <color name="colorPrimaryLight">#E1BEE7</color>
+    <color name="colorAccent">#607D8B</color>
+    <color name="textAndIcons">#FFFFFF</color>
+    <color name="textPrimary">#212121</color>
+    <color name="textSecondary">#757575</color>
+    <color name="colorDivider">#757575</color>
 
-    <color name="background">#004643</color>
-    <color name="headline">#fffffe</color>
-    <color name="paragraph">#abd1c6</color>
-    <color name="button">#f9bc60</color>
-    <color name="buttonText">#001e1d</color>
-
-    <color name="stroke">#001e1d</color>
-    <color name="main">#e8e4e6</color>
-    <color name="highlight">#f9bc60</color>
-    <color name="secondary">#abd1c6</color>
-    <color name="tertiary">#e16162</color>
+    <color name="confirmed">#f9bc60</color>
+    <color name="recovered">#4CAF50</color>
+    <color name="death">#e16162</color>
 </resources>

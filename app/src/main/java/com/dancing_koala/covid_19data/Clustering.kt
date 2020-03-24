@@ -1,10 +1,11 @@
 package com.dancing_koala.covid_19data
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
-import com.dancing_koala.covid_19data.data.StateData
+import com.dancing_koala.covid_19data.data.AreaData
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
@@ -15,16 +16,15 @@ import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import com.google.maps.android.ui.IconGenerator
 
-
+@SuppressLint("InflateParams")
 class ReportClusterRenderer(appContext: Context, map: GoogleMap, clusterManager: ClusterManager<ReportClusterItem>) :
     DefaultClusterRenderer<ReportClusterItem>(appContext, map, clusterManager) {
 
     private val baseMapMarkerSize: Int = appContext.resources.getDimension(R.dimen.base_map_marker_size).toInt()
-    private val bigMapMarkerSize: Int = (baseMapMarkerSize * 1.5f).toInt()
-    private val veryBigMapMarkerSize: Int = (baseMapMarkerSize * 2)
+    private val bigMapMarkerSize: Int = (baseMapMarkerSize * 1.25f).toInt()
+    private val veryBigMapMarkerSize: Int = (baseMapMarkerSize * 1.5f).toInt()
 
     private val itemIconGenerator = IconGenerator(appContext)
-
     private val itemTextViewCanvas: TextView
 
     init {
@@ -88,7 +88,7 @@ class ReportClusterRenderer(appContext: Context, map: GoogleMap, clusterManager:
     }
 }
 
-class ReportClusterItem(val report: StateData) : ClusterItem {
+class ReportClusterItem(val report: AreaData) : ClusterItem {
 
     private val title = report.country
     private val latLng = LatLng(report.latitude, report.longitude)

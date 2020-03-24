@@ -1,7 +1,7 @@
 package com.dancing_koala.covid_19data
 
-import com.dancing_koala.covid_19data.data.CsvDataParser
 import com.dancing_koala.covid_19data.data.DailyReport
+import com.dancing_koala.covid_19data.data.JHUDataParser
 import com.dancing_koala.covid_19data.data.StateTimeSeries
 import org.junit.After
 import org.junit.Assert
@@ -12,7 +12,7 @@ import java.io.FileReader
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CsvDataParserTest {
+class JHUDataParserTest {
 
     val timeSeriesFileName = "time_series_shortened.csv"
     val dailyReportFileName = "daily_report_shortened.csv"
@@ -103,7 +103,7 @@ class CsvDataParserTest {
 
         val fileUrl = javaClass.getResource("/$timeSeriesFileName") ?: throw FileNotFoundException(timeSeriesFileName)
         val fileReader = FileReader(fileUrl.file)
-        val parser = CsvDataParser()
+        val parser = JHUDataParser()
         val actual = parser.parseTimeSeriesCsv(fileReader)
 
         Assert.assertEquals(expected.size, actual.size)
@@ -115,20 +115,20 @@ class CsvDataParserTest {
 
     @Test
     fun parseDailyReportCsv() {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
 
         val expected = listOf(
-            DailyReport("Hubei", "China", dateFormat.parse("2020-03-13T11:09:03")!!, 67786, 3062, 51553, 30.9756, 112.2707),
-            DailyReport("", "Afghanistan", dateFormat.parse("2020-03-11T20:00:00")!!, 7, 0, 0, 33.0, 65.0),
-            DailyReport("", "Monaco", dateFormat.parse("2020-03-11T20:00:00")!!, 2, 0, 0, 43.7333, 7.4167),
-            DailyReport("", "Liechtenstein", dateFormat.parse("2020-03-11T20:00:00")!!, 1, 0, 0, 47.14, 9.55),
-            DailyReport("", "Guyana", dateFormat.parse(" 2020-03-11T20:00:00")!!, 1, 1, 0, 5.0, -58.75),
-            DailyReport("", "Taiwan*", dateFormat.parse("2020-03-11T20:00:00")!!, 50, 1, 20, 23.7, 121.0)
+            DailyReport("Hubei", "China", dateFormat.parse("2020-03-13T11:09:03")!!, 67786, 3062, 51553, 0, 30.9756, 112.2707),
+            DailyReport("", "Afghanistan", dateFormat.parse("2020-03-11T20:00:00")!!, 7, 0, 0, 0, 33.0, 65.0),
+            DailyReport("", "Monaco", dateFormat.parse("2020-03-11T20:00:00")!!, 2, 0, 0, 0, 43.7333, 7.4167),
+            DailyReport("", "Liechtenstein", dateFormat.parse("2020-03-11T20:00:00")!!, 1, 0, 0, 0, 47.14, 9.55),
+            DailyReport("", "Guyana", dateFormat.parse(" 2020-03-11T20:00:00")!!, 1, 1, 0, 0, 5.0, -58.75),
+            DailyReport("", "Taiwan*", dateFormat.parse("2020-03-11T20:00:00")!!, 50, 1, 20, 0, 23.7, 121.0)
         )
 
         val fileUrl = javaClass.getResource("/$dailyReportFileName") ?: throw FileNotFoundException(timeSeriesFileName)
         val fileReader = FileReader(fileUrl.file)
-        val parser = CsvDataParser()
+        val parser = JHUDataParser()
         val actual = parser.parseDailyReportCsv(fileReader)
 
         Assert.assertEquals(expected.size, actual.size)

@@ -6,7 +6,7 @@ import java.io.StringReader
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CsvDataParser {
+class JHUDataParser {
 
     fun parseTimeSeriesCsv(csvData: String): List<StateTimeSeries> =
         parseTimeSeriesCsv(StringReader(csvData))
@@ -51,7 +51,7 @@ class CsvDataParser {
         val csvContainer = csvReader.read(reader)
         val csvRows = csvContainer.rows
 
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
 
         val result = mutableListOf<DailyReport>()
 

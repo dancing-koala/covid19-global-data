@@ -18,7 +18,7 @@ import com.dancing_koala.covid_19data.android.ColoredChipItem
 import com.dancing_koala.covid_19data.core.Color
 import com.dancing_koala.covid_19data.core.ColorPool
 import com.dancing_koala.covid_19data.data.DataCategory
-import com.dancing_koala.covid_19data.data.StateData
+import com.dancing_koala.covid_19data.data.AreaData
 import com.dancing_koala.covid_19data.itemselection.ItemSelectionActivity
 import com.dancing_koala.covid_19data.itemselection.ItemSelectionBridge
 import com.dancing_koala.covid_19data.itemselection.SelectableItem
@@ -42,7 +42,7 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
 
     private val simpleChipAdapter = ColoredChipAdapter()
     private val selectedSubjects = mutableListOf<DatavizSubject>()
-    private var currentDataCategory = DataCategory.CONFIRMED
+    private var currentDataCategory = DataCategory.CASES
 
     private val selectableItems: ArrayList<SelectableItem> by lazy {
         worldData.map { it.toSelectableItem() } as ArrayList<SelectableItem>
@@ -116,14 +116,14 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
     override fun onChipCloseClick(coloredChipItem: ColoredChipItem) {
         simpleChipAdapter.removeChip(coloredChipItem)
         val subject = selectedSubjects.first {
-            it.stateData.localId == coloredChipItem.id
+            it.areaData.localId == coloredChipItem.id
         }
         selectedSubjects.remove(subject)
         colorPool.recycleColor(subject.associatedColor)
         updateChartData()
     }
 
-    private fun onStateDataSelected(data: StateData) {
+    private fun onStateDataSelected(data: AreaData) {
         colorPool.takeColor()?.let { color ->
             val subject = DatavizSubject(data, color)
             selectedSubjects.add(subject)
@@ -142,12 +142,12 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
 
         selectedSubjects.forEach { subject ->
             val entries = when (currentDataCategory) {
-                DataCategory.CONFIRMED -> subject.stateData.confirmedPerDayData
-                DataCategory.RECOVERED -> subject.stateData.recoveredPerDayData
-                DataCategory.DEATHS    -> subject.stateData.deathsPerDayData
+                DataCategory.CASES     -> subject.areaData.confirmedPerDayData
+                DataCategory.RECOVERED -> subject.areaData.recoveredPerDayData
+                DataCategory.DEATHS    -> subject.areaData.deathsPerDayData
             }.toChartEntries()
 
-            val lineDataSet = LineDataSet(entries, subject.stateData.fullLabel).apply {
+            val lineDataSet = LineDataSet(entries, subject.areaData.fullLabel).apply {
                 color = subject.associatedColor.intValue
                 setDrawCircles(false)
                 setDrawValues(false)
@@ -173,9 +173,9 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
         }
     }
 
-    private fun StateData.toSelectableItem(): SelectableItem = SelectableItem(localId, fullLabel)
+    private fun AreaData.toSelectableItem(): SelectableItem = SelectableItem(localId, fullLabel)
 
-    private fun StateData.toSimpleChipItem(backgroundColor: Color): ColoredChipItem =
+    private fun AreaData.toSimpleChipItem(backgroundColor: Color): ColoredChipItem =
         ColoredChipItem(localId, fullLabel, backgroundColor)
 
     private class DataCategorySpinnerAdapter : BaseAdapter() {

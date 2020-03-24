@@ -11,9 +11,9 @@ class DataTransformer {
         confirmedTimeSeries: List<StateTimeSeries>,
         deathsTimeSeries: List<StateTimeSeries>,
         recoveredTimeSeries: List<StateTimeSeries>
-    ): List<StateData> {
-        val worldData = mutableListOf<StateData>()
-        val sortedDailyReports = dailyReports.sortedBy { it.country.toLowerCase() + it.state }
+    ): List<AreaData> {
+        val worldData = mutableListOf<AreaData>()
+        val sortedDailyReports = dailyReports.sortedBy { it.country.toLowerCase(Locale.ROOT) + it.state }
 
         for ((i, dailyReport) in sortedDailyReports.withIndex()) {
             val localId = i + 1
@@ -23,7 +23,7 @@ class DataTransformer {
             val stateDeaths = deathsTimeSeries.firstOrNull { it.state + it.country == remoteId }
             val stateRecovered = recoveredTimeSeries.firstOrNull { it.state + it.country == remoteId }
 
-            val stateData = StateData(
+            val stateData = AreaData(
                 localId = localId,
                 state = dailyReport.state,
                 country = dailyReport.country.capitalize(),
@@ -63,7 +63,7 @@ class DataTransformer {
             recoveredPerDayData.aggregate(it.recoveredPerDayData)
         }
 
-        val worldwide = StateData(
+        val worldwide = AreaData(
             0, "", "Worldwide", lastUpdate,
             confirmed, deaths, recovered, Double.NaN, Double.NaN,
             confirmedPerDayData, deathsPerDayData, recoveredPerDayData

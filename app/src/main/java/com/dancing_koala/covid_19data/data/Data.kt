@@ -22,7 +22,7 @@ data class StateTimeSeries(
     val perDayData: HashMap<String, Int>
 )
 
-data class StateData(
+data class AreaData(
     val localId: Int,
     val state: String,
     val country: String,
@@ -40,7 +40,32 @@ data class StateData(
 }
 
 enum class DataCategory(val label: String) {
-    CONFIRMED("Confirmed"),
+    CASES("Cases"),
     RECOVERED("Recovered"),
     DEATHS("Deaths")
 }
+
+data class Country(
+    val id: Int,
+    val name: String,
+    val iso2: String,
+    val latitude: Double,
+    val longitude: Double
+)
+
+data class DataSet(
+    val id: Int,
+    val country: Country,
+    val cases: Int,
+    val casesToday: Int,
+    val deaths: Int,
+    val deathsToday: Int,
+    val recovered: Int,
+    val recoveredToday: Int,
+    val active: Int,
+    val critical: Int,
+    val casesPerOneMillion: Int,
+    val casesTimeLine: HashMap<String, Int>,
+    val deathsTimeLine: HashMap<String, Int>,
+    val recoveredTimeLine: HashMap<String, Int>
+)

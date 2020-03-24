@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/base_margin_xs"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
-            android:textColor="@color/stroke"
+            android:textColor="@color/textPrimary"
             tools:text="Worldwide" />
 
         <TextView
@@ -35,7 +35,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/highlight"
+            android:textColor="@color/confirmed"
             tools:text="Confirmed 123" />
 
         <TextView
@@ -43,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/secondary"
+            android:textColor="@color/recovered"
             tools:text="Recovered 123" />
 
         <TextView
@@ -51,7 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/tertiary"
+            android:textColor="@color/death"
             tools:text="Death 123" />
     </LinearLayout>
 

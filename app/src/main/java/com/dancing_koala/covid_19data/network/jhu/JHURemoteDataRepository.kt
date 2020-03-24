@@ -1,20 +1,21 @@
-package com.dancing_koala.covid_19data.network
+package com.dancing_koala.covid_19data.network.jhu
 
-import com.dancing_koala.covid_19data.data.CsvDataParser
 import com.dancing_koala.covid_19data.data.DailyReport
+import com.dancing_koala.covid_19data.data.JHUDataParser
 import com.dancing_koala.covid_19data.data.StateTimeSeries
+import com.dancing_koala.covid_19data.network.BaseService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.*
 
-class RemoteDataRepository() {
+class JHURemoteDataRepository {
     private val service = JHUGithubService()
-    private val csvDataParser = CsvDataParser()
+    private val csvDataParser = JHUDataParser()
 
     suspend fun getConfirmedTimeSeries(): List<StateTimeSeries> = withContext(Dispatchers.IO) {
         val result = service.fetchConfirmedTimeSeriesData()
 
-        if (result is JHUGithubService.Result.Success) {
+        if (result is BaseService.Result.Success) {
             return@withContext csvDataParser.parseTimeSeriesCsv(result.data)
         }
 
@@ -24,7 +25,7 @@ class RemoteDataRepository() {
     suspend fun getDeathsTimeSeries(): List<StateTimeSeries> = withContext(Dispatchers.IO) {
         val result = service.fetchDeathsTimeSeriesData()
 
-        if (result is JHUGithubService.Result.Success) {
+        if (result is BaseService.Result.Success) {
             return@withContext csvDataParser.parseTimeSeriesCsv(result.data)
         }
 
@@ -34,7 +35,7 @@ class RemoteDataRepository() {
     suspend fun getRecoveredTimeSeries(): List<StateTimeSeries> = withContext(Dispatchers.IO) {
         val result = service.fetchRecoveredTimeSeriesData()
 
-        if (result is JHUGithubService.Result.Success) {
+        if (result is BaseService.Result.Success) {
             return@withContext csvDataParser.parseTimeSeriesCsv(result.data)
         }
 
@@ -43,7 +44,7 @@ class RemoteDataRepository() {
 
     suspend fun getLastDailyReports(): List<DailyReport> = withContext(Dispatchers.IO) {
         val cal = Calendar.getInstance()
-        var result: JHUGithubService.Result? = null
+        var result: BaseService.Result? = null
 
         while (result == null || result.responseCode == 404) {
             cal.add(Calendar.DATE, -1)
@@ -53,7 +54,7 @@ class RemoteDataRepository() {
             )
         }
 
-        if (result is JHUGithubService.Result.Success) {
+        if (result is BaseService.Result.Success) {
             return@withContext csvDataParser.parseDailyReportCsv(result.data)
         }
 

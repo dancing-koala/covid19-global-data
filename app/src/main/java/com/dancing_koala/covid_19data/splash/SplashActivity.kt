@@ -1,4 +1,4 @@
-package com.dancing_koala.covid_19data
+package com.dancing_koala.covid_19data.splash
 
 import android.animation.ValueAnimator
 import android.content.Intent
@@ -6,15 +6,13 @@ import android.os.Bundle
 import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.ImageView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.dancing_koala.covid_19data.data.DataTransformer
-import com.dancing_koala.covid_19data.dataviz.DatavizActivity
-import com.dancing_koala.covid_19data.network.RemoteDataRepository
+import androidx.lifecycle.Observer
+import com.dancing_koala.covid_19data.HomeActivity
+import com.dancing_koala.covid_19data.R
+import com.dancing_koala.covid_19data.splash.SplashViewModel.ViewState.*
 import kotlinx.android.synthetic.main.activity_splash.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class SplashActivity : AppCompatActivity() {
 
@@ -29,40 +27,31 @@ class SplashActivity : AppCompatActivity() {
         }
     }
 
+    private val viewModel: SplashViewModel by viewModels()
+
     private val refreshIcons: MutableList<ImageView> by lazy {
         mutableListOf(currentDataRefreshIcon, timeSeriesConfirmedIcon, timeSeriesDeathsIcon, timeSeriesRecoveredIcon)
     }
-
-    private val remoteDataRepository = RemoteDataRepository()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        CoroutineScope(Dispatchers.Main).launch {
-            val dailyReports = remoteDataRepository.getLastDailyReports()
-            stopAnimatingAndSetAsDone(currentDataRefreshIcon)
-            val confirmedTimeSeries = remoteDataRepository.getConfirmedTimeSeries()
-            stopAnimatingAndSetAsDone(timeSeriesConfirmedIcon)
-            val deathsTimeSeries = remoteDataRepository.getDeathsTimeSeries()
-            stopAnimatingAndSetAsDone(timeSeriesDeathsIcon)
-            val recoveredTimeSeries = remoteDataRepository.getRecoveredTimeSeries()
-            stopAnimatingAndSetAsDone(timeSeriesRecoveredIcon)
-            rotationAnimator.cancel()
-
-            downloadIconsContainer.visibility = View.GONE
-            processingDataLabel.visibility = View.VISIBLE
-
-            val processedData = withContext(Dispatchers.Default) {
-                DataTransformer().transform(
-                    dailyReports, confirmedTimeSeries, deathsTimeSeries, recoveredTimeSeries
-                )
+        viewModel.viewStateLiveData.observe(this, Observer {
+            when (it) {
+                StopAnimation.CurrentData         -> stopAnimatingAndSetAsDone(currentDataRefreshIcon)
+                StopAnimation.ConfirmedTimeSeries -> stopAnimatingAndSetAsDone(timeSeriesConfirmedIcon)
+                StopAnimation.DeathsTimeSeries    -> stopAnimatingAndSetAsDone(timeSeriesDeathsIcon)
+                StopAnimation.RecoveredTimeSeries -> stopAnimatingAndSetAsDone(timeSeriesRecoveredIcon)
+                ShowProcessingData                -> {
+                    downloadIconsContainer.visibility = View.GONE
+                    processingDataLabel.visibility = View.VISIBLE
+                }
+                GoToMapScreen                     -> goToMapScreen()
             }
+        })
 
-            DataStorage.instance.updateData(processedData)
-
-            goToMapScreen()
-        }
+        viewModel.start()
     }
 
     override fun onResume() {
@@ -81,6 +70,10 @@ class SplashActivity : AppCompatActivity() {
         rotationAnimator.start()
         imageView.rotation = 0f
         imageView.setImageResource(R.drawable.ic_check_circle)
+
+        if (refreshIcons.isEmpty()) {
+            rotationAnimator.cancel()
+        }
     }
 
     private fun goToMapScreen() {

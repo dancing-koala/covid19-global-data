@@ -5,22 +5,13 @@ import kotlinx.coroutines.withContext
 import okhttp3.CacheControl
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import java.util.*
 import java.util.concurrent.TimeUnit
 
-class JHUGithubService {
+abstract class BaseService {
 
-    private val okHttpClient = OkHttpClient()
+    protected abstract val okHttpClient: OkHttpClient
 
-    private val baseUrl = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data"
-    private val timeSeriesPath = "csse_covid_19_time_series"
-    private val dailyReportsPath = "csse_covid_19_daily_reports"
-
-    private val confirmedTimeSeriesURL = "$baseUrl/$timeSeriesPath/time_series_19-covid-Confirmed.csv"
-    private val deathsTimeSeriesURL = "$baseUrl/$timeSeriesPath/time_series_19-covid-Deaths.csv"
-    private val recoveredTimeSeriesURL = "$baseUrl/$timeSeriesPath/time_series_19-covid-Recovered.csv"
-
-    private suspend fun fetchContent(url: String): Result =
+    protected suspend fun fetchContent(url: String): Result =
         withContext(Dispatchers.IO) {
             val request = Request.Builder()
                 .url(url)
@@ -49,15 +40,6 @@ class JHUGithubService {
                 return@withContext Result.Error.UnknownError(url = url, throwable = e)
             }
         }
-
-    suspend fun fetchConfirmedTimeSeriesData(): Result = fetchContent(confirmedTimeSeriesURL)
-    suspend fun fetchDeathsTimeSeriesData(): Result = fetchContent(deathsTimeSeriesURL)
-    suspend fun fetchRecoveredTimeSeriesData(): Result = fetchContent(recoveredTimeSeriesURL)
-
-    suspend fun fetchDailyReportData(year: Int, month: Int, day: Int): Result {
-        val fileName = String.format(Locale.US, "%02d-%02d-%04d.csv", month, day, year)
-        return fetchContent("$baseUrl/$dailyReportsPath/$fileName")
-    }
 
     sealed class Result(val responseCode: Int) {
         class Success(responseCode: Int, val data: String) : Result(responseCode)
