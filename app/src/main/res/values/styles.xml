@@ -22,6 +22,10 @@
 
     <style name="AppTheme.HomeScreen" parent="AppTheme.NoActionBarScreen" />
 
+    <style name="AppTheme.HomeScreen.Counter" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="AppTheme.DatavizScreen" parent="AppTheme" />
 
     <style name="AppTheme.SplashScreen.Text" parent="TextAppearance.AppCompat.Body2">

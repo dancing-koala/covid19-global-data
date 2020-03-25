@@ -5,4 +5,7 @@
     <string name="fetching_deaths_time_series">Fetching deaths time series</string>
     <string name="fetching_recovered_time_series">Fetching recovered time series</string>
     <string name="processing_data">Processing data...</string>
+    <string name="home_cases_label">cases</string>
+    <string name="home_recovered_label">recovered</string>
+    <string name="home_deaths_label">deaths</string>
 </resources>

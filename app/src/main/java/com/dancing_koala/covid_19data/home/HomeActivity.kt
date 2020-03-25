@@ -25,10 +25,10 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        val mapFragment: SupportMapFragment? = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
+        val mapFragment: SupportMapFragment? = supportFragmentManager.findFragmentById(R.id.homeMapFragment) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
 
-        datavizButton.setOnClickListener {
+        homeDatavizButton.setOnClickListener {
             goToDatavizScreen()
         }
 
@@ -84,7 +84,7 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
             worldData.forEach { report ->
-                if (report.country.latitude != Double.NaN) {
+                if (!report.country.latitude.isNaN()) {
                     clusterManager.addItem(ReportClusterItem(report))
                 }
             }
@@ -95,9 +95,9 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun updateCounters(country: String, state: String, confirmed: Int, deaths: Int, recovered: Int) {
         val location = if (state.isEmpty() || state == country) country else "$state, $country"
 
-        locationCountTextView.text = location
-        confirmedCountTextView.text = ("Confirmed: $confirmed")
-        recoveredCountTextView.text = ("Recovered: $recovered")
-        deathsCountTextView.text = ("Deaths: $deaths")
+        homeDataSetNameTextView.text = location
+        homeCasesCountTextView.text = (confirmed.toString())
+        homeRecoveredCountTextView.text = (recovered.toString())
+        homeDeathsCountTextView.text = (deaths.toString())
     }
 }
