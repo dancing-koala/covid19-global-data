@@ -8,4 +8,5 @@
     <string name="home_cases_label">cases</string>
     <string name="home_recovered_label">recovered</string>
     <string name="home_deaths_label">deaths</string>
+    <string name="home_loading_data">Loading current data...</string>
 </resources>

@@ -8,7 +8,9 @@ class LmaoNinjaApiService : BaseService() {
 
     private val baseUrl = "https://corona.lmao.ninja"
     private val countriesUrl = "$baseUrl/countries"
-    private val historicalUrl = "$baseUrl/historical"
+    private val historicalV2Url = "$baseUrl/v2/historical"
 
     suspend fun fetchCountriesData() = fetchContent(countriesUrl)
+
+    suspend fun fetchHistoricalV2() = fetchContent(historicalV2Url)
 }

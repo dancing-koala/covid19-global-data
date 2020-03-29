@@ -8,8 +8,11 @@ import androidx.lifecycle.Observer
 import com.dancing_koala.covid_19data.R
 import com.dancing_koala.covid_19data.ReportClusterItem
 import com.dancing_koala.covid_19data.ReportClusterRenderer
+import com.dancing_koala.covid_19data.android.hide
+import com.dancing_koala.covid_19data.android.show
 import com.dancing_koala.covid_19data.data.ReportDataSet
 import com.dancing_koala.covid_19data.dataviz.DatavizActivity
+import com.dancing_koala.covid_19data.home.HomeViewModel.ViewState
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -35,9 +38,10 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
 
         viewModel.viewStateLiveData.observe(this, Observer {
             when (it) {
-                is HomeViewModel.ViewState.UpdateMainReportValues -> with(it.report) { updateCounters(country.name, cases, deaths, recovered) }
-                is HomeViewModel.ViewState.DisplayItemsOnMap      -> updateData(it.items)
-                is HomeViewModel.ViewState.GoToDataviz            -> goToDatavizScreen()
+                is ViewState.UpdateMainReportValues -> with(it.report) { updateCounters(country.name, cases, deaths, recovered) }
+                is ViewState.GoToDataviz            -> goToDatavizScreen()
+                ViewState.ShowLoading               -> homeLoadingIndicator.show()
+                ViewState.HideLoading               -> homeLoadingIndicator.hide()
             }
         })
 
@@ -47,13 +51,13 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun goToDatavizScreen() = startActivity(Intent(this, DatavizActivity::class.java))
 
     override fun onMapReady(map: GoogleMap?) {
-        map?.let { nnMap ->
-            googleMap = nnMap
+        map?.let { validMap ->
+            googleMap = validMap
 
-            clusterManager = ClusterManager<ReportClusterItem>(this, nnMap).apply {
-                renderer = ReportClusterRenderer(applicationContext, nnMap, this)
-                nnMap.setOnCameraIdleListener(this)
-                nnMap.setOnMarkerClickListener(this)
+            clusterManager = ClusterManager<ReportClusterItem>(this, validMap).apply {
+                renderer = ReportClusterRenderer(applicationContext, validMap, this)
+                validMap.setOnCameraIdleListener(this)
+                validMap.setOnMarkerClickListener(this)
 
                 setOnClusterItemClickListener {
                     updateCounters(
@@ -63,25 +67,25 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
                         it.report.recovered
                     )
 
-                    nnMap.animateCamera(CameraUpdateFactory.newLatLng(it.position))
+                    validMap.animateCamera(CameraUpdateFactory.newLatLng(it.position))
 
                     true
                 }
 
                 setOnClusterClickListener {
-                    nnMap.animateCamera(CameraUpdateFactory.newLatLngZoom(it.position, nnMap.cameraPosition.zoom + 1f))
+                    validMap.animateCamera(CameraUpdateFactory.newLatLngZoom(it.position, validMap.cameraPosition.zoom + 1f))
                     true
                 }
             }
 
-            viewModel.onMapReady()
+            viewModel.reportsLiveData.observe(this, Observer {
+                updateMarkers(it)
+            })
         }
     }
 
-    private fun updateData(data: List<ReportDataSet>) {
-        if (googleMap == null) {
-            return
-        }
+    private fun updateMarkers(data: List<ReportDataSet>) {
+        googleMap ?: return
 
         if (clusterManager.markerCollection?.markers?.isEmpty() != false) {
             data.forEach { report ->
@@ -89,6 +93,7 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
                     clusterManager.addItem(ReportClusterItem(report))
                 }
             }
+
             clusterManager.cluster()
         }
     }

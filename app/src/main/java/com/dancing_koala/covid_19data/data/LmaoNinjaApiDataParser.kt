@@ -5,14 +5,16 @@ import org.json.JSONObject
 
 class LmaoNinjaApiDataParser {
 
+    private val dateFormattedCache = HashMap<String, String>()
+
     fun parseCountriesData(jsonData: String): List<ReportDataSet> {
         val result = mutableListOf<ReportDataSet>()
         val rootJsonArray = JSONArray(jsonData)
 
         val reportDataHolder = MutableReportDataHolder()
 
-        for (i in 0 until rootJsonArray.length()) {
-            val reportDataSet = rootJsonArray.getJSONObject(i).toReportDataSet(i + 1)
+        rootJsonArray.foreachJsonObject { index, item ->
+            val reportDataSet = item.toReportDataSet(index + 1)
 
             reportDataHolder.cases += reportDataSet.cases
             reportDataHolder.casesToday += reportDataSet.casesToday
@@ -54,6 +56,26 @@ class LmaoNinjaApiDataParser {
         return result
     }
 
+    fun parseTimeLineDataSets(jsonData: String): List<TimeLineDataSet> {
+        val result = mutableListOf<TimeLineDataSet>()
+        val rootJsonArray = JSONArray(jsonData)
+
+        rootJsonArray.foreachJsonObject { index, item ->
+            val timeLineDataSet = item.toTimeLineDataSet(index)
+            result.add(timeLineDataSet)
+        }
+
+        return result
+    }
+
+    private fun JSONArray.foreachJsonObject(itemBlock: (index: Int, item: JSONObject) -> Unit) {
+        val length = length()
+
+        for (i in 0 until length) {
+            itemBlock.invoke(i, getJSONObject(i))
+        }
+    }
+
     private fun JSONObject.toReportDataSet(id: Int): ReportDataSet {
         val countryName = getString("country")
         val country = getJSONObject("countryInfo").toCountry(countryName)
@@ -84,6 +106,35 @@ class LmaoNinjaApiDataParser {
         )
     }
 
+    private fun JSONObject.toTimeLineDataSet(id: Int): TimeLineDataSet {
+
+        val timeLineObject = getJSONObject("timeline")
+
+        return TimeLineDataSet(
+            id = id,
+            provinceName = optString("province", ""),
+            countryName = getString("country"),
+            casesTimeLine = timeLineObject.getJSONObject("cases").toTimeLine(),
+            deathsTimeLine = timeLineObject.getJSONObject("deaths").toTimeLine()
+        )
+    }
+
+    private fun JSONObject.toTimeLine(): TimeLine {
+        val result = TimeLine()
+
+        keys().forEach { key ->
+            val date = dateFormattedCache.getOrPut(key) { formatDate(key) }
+            result[date] = optInt(key)
+        }
+
+        return result
+    }
+
+    private fun formatDate(date: String): String {
+        val parts = date.split("/").map { if (it.length < 2) "0$it" else it }
+        return "20${parts[2]}-${parts[0]}-${parts[1]}"
+    }
+
     private class MutableReportDataHolder(
         var cases: Int = 0,
         var casesToday: Int = 0,
@@ -95,5 +146,10 @@ class LmaoNinjaApiDataParser {
         var critical: Int = 0,
         var casesPerOneMillion: Int = 0,
         var deathsPerOneMillion: Int = 0
+    )
+
+    private class MutableTimeLineDataHolder(
+        val casesTimeLine: TimeLine = TimeLine(),
+        val deathsTimeLine: TimeLine = TimeLine()
     )
 }

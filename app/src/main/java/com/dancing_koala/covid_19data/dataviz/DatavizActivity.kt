@@ -10,18 +10,17 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.BaseAdapter
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.dancing_koala.covid_19data.DataStorage
 import com.dancing_koala.covid_19data.R
 import com.dancing_koala.covid_19data.android.ColoredChipAdapter
 import com.dancing_koala.covid_19data.android.ColoredChipItem
 import com.dancing_koala.covid_19data.core.Color
 import com.dancing_koala.covid_19data.core.ColorPool
-import com.dancing_koala.covid_19data.data.AreaData
 import com.dancing_koala.covid_19data.data.DataCategory
+import com.dancing_koala.covid_19data.data.TimeLineDataSet
 import com.dancing_koala.covid_19data.itemselection.ItemSelectionActivity
-import com.dancing_koala.covid_19data.itemselection.ItemSelectionBridge
 import com.dancing_koala.covid_19data.itemselection.SelectableItem
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
@@ -35,8 +34,6 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
         const val SELECTION_REQUEST_CODE = 123
     }
 
-    private val worldData = DataStorage.instance.data
-
     private val colorPool = ColorPool(
         listOf("#1DE5BC", "#EA7369", "#EABD3C", "#C02223").reversed()
     )
@@ -45,9 +42,7 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
     private val selectedSubjects = mutableListOf<DatavizSubject>()
     private var currentDataCategory = DataCategory.CASES
 
-    private val selectableItems: ArrayList<SelectableItem> by lazy {
-        worldData.map { it.toSelectableItem() } as ArrayList<SelectableItem>
-    }
+    private val viewModel: DatavizViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,9 +54,15 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
         }
 
         datavizAddDataButton.setOnClickListener {
-            showSelectionScreen()
+            viewModel.onAddDataButtonClick()
         }
 
+        setUpChart()
+
+        viewModel.start()
+    }
+
+    private fun setUpChart() {
         val customValueFormatter = object : ValueFormatter() {
             private val labels = listOf<String>()
 
@@ -118,9 +119,9 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
                 return
             }
 
-            val item = worldData.first { it.localId == selectedId }
-            when (requestCode) {
-                SELECTION_REQUEST_CODE -> onStateDataSelected(item)
+            if (requestCode == SELECTION_REQUEST_CODE) {
+//                val item = worldData.first { it.localId == selectedId }
+//                onStateDataSelected(item)
             }
         }
     }
@@ -128,14 +129,14 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
     override fun onChipCloseClick(coloredChipItem: ColoredChipItem) {
         simpleChipAdapter.removeChip(coloredChipItem)
         val subject = selectedSubjects.first {
-            it.areaData.localId == coloredChipItem.id
+            it.timeLineDataSet.id == coloredChipItem.id
         }
         selectedSubjects.remove(subject)
         colorPool.recycleColor(subject.associatedColor)
         updateChartData()
     }
 
-    private fun onStateDataSelected(data: AreaData) {
+    private fun onStateDataSelected(data: TimeLineDataSet) {
         colorPool.takeColor()?.let { color ->
             val subject = DatavizSubject(data, color)
             selectedSubjects.add(subject)
@@ -154,12 +155,11 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
 
         selectedSubjects.forEach { subject ->
             val entries = when (currentDataCategory) {
-                DataCategory.CASES     -> subject.areaData.confirmedPerDayData
-                DataCategory.RECOVERED -> subject.areaData.recoveredPerDayData
-                DataCategory.DEATHS    -> subject.areaData.deathsPerDayData
+                DataCategory.CASES  -> subject.timeLineDataSet.casesTimeLine
+                DataCategory.DEATHS -> subject.timeLineDataSet.deathsTimeLine
             }.toChartEntries()
 
-            val lineDataSet = LineDataSet(entries, subject.areaData.fullLabel).apply {
+            val lineDataSet = LineDataSet(entries, null).apply {
                 color = subject.associatedColor.intValue
                 setDrawCircles(false)
                 setDrawValues(false)
@@ -174,7 +174,6 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
     }
 
     private fun showSelectionScreen() {
-        ItemSelectionBridge.items = selectableItems
         val intent = Intent(this, ItemSelectionActivity::class.java)
         startActivityForResult(intent, SELECTION_REQUEST_CODE)
     }
@@ -185,10 +184,10 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
         }
     }
 
-    private fun AreaData.toSelectableItem(): SelectableItem = SelectableItem(localId, fullLabel)
+    private fun TimeLineDataSet.toSelectableItem(): SelectableItem = SelectableItem(id, locationName)
 
-    private fun AreaData.toSimpleChipItem(backgroundColor: Color): ColoredChipItem =
-        ColoredChipItem(localId, fullLabel, backgroundColor)
+    private fun TimeLineDataSet.toSimpleChipItem(backgroundColor: Color): ColoredChipItem =
+        ColoredChipItem(id, locationName, backgroundColor)
 
     private class DataCategorySpinnerAdapter : BaseAdapter() {
         private val items = DataCategory.values()

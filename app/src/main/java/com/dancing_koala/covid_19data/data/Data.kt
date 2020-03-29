@@ -41,7 +41,6 @@ data class AreaData(
 
 enum class DataCategory(val label: String) {
     CASES("Cases"),
-    RECOVERED("Recovered"),
     DEATHS("Deaths")
 }
 
@@ -67,3 +66,19 @@ data class ReportDataSet(
     val casesPerOneMillion: Int,
     val deathsPerOneMillion: Int
 )
+
+class TimeLine : HashMap<String, Int>()
+
+data class TimeLineDataSet(
+    val id: Int,
+    val provinceName: String,
+    val countryName: String,
+    val casesTimeLine: TimeLine,
+    val deathsTimeLine: TimeLine
+) {
+    val locationName = if (provinceName.isEmpty() || provinceName == countryName) {
+        countryName
+    } else {
+        "$countryName, $provinceName"
+    }
+}

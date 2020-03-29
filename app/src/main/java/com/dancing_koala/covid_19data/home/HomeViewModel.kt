@@ -4,25 +4,40 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.dancing_koala.covid_19data.DataStorage
+import androidx.lifecycle.viewModelScope
 import com.dancing_koala.covid_19data.data.ReportDataSet
+import com.dancing_koala.covid_19data.network.lmaoninja.LmaoNinjaApiRemoteDataRepository
+import kotlinx.coroutines.launch
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val worldData = DataStorage.instance.countriesData
+    private val internalReportsLiveData = MutableLiveData<List<ReportDataSet>>()
+
+    val reportsLiveData: LiveData<List<ReportDataSet>>
+        get() = internalReportsLiveData
+
+    private val internalViewStateLiveData = MutableLiveData<ViewState>()
 
     val viewStateLiveData: LiveData<ViewState>
         get() = internalViewStateLiveData
 
-    private val internalViewStateLiveData = MutableLiveData<ViewState>()
+    private val remoteDataRepository = LmaoNinjaApiRemoteDataRepository()
 
     fun start() {
-        val worldReport = worldData.first { it.id == 0 }
-        internalViewStateLiveData.value = ViewState.UpdateMainReportValues(worldReport)
-    }
+        viewModelScope.launch {
+            internalViewStateLiveData.value = ViewState.ShowLoading
 
-    fun onMapReady() {
-        internalViewStateLiveData.value = ViewState.DisplayItemsOnMap(worldData)
+            val tempWorldData = remoteDataRepository.getCountriesReports()
+
+            internalReportsLiveData.value = tempWorldData
+
+            if (tempWorldData.isNotEmpty()) {
+                val worldReport = tempWorldData.first { it.id == 0 }
+                internalViewStateLiveData.value = ViewState.UpdateMainReportValues(worldReport)
+            }
+
+            internalViewStateLiveData.value = ViewState.HideLoading
+        }
     }
 
     fun onDatavizButtonClick() {
@@ -31,8 +46,9 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     sealed class ViewState {
         class UpdateMainReportValues(val report: ReportDataSet) : ViewState()
-        class DisplayItemsOnMap(val items: List<ReportDataSet>) : ViewState()
         object GoToDataviz : ViewState()
+        object ShowLoading : ViewState()
+        object HideLoading : ViewState()
     }
 
 }
