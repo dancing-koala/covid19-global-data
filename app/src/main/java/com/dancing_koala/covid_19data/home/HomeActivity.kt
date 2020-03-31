@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import com.dancing_koala.covid_19data.R
 import com.dancing_koala.covid_19data.ReportClusterItem
@@ -36,9 +37,15 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
 
         homeDatavizButton.setOnClickListener { viewModel.onDatavizButtonClick() }
 
+        homeWorldReportButton.setOnClickListener { viewModel.onWorldReportButtonClick() }
+        homeWorldReportButton.hide()
+
         viewModel.viewStateLiveData.observe(this, Observer {
             when (it) {
-                is ViewState.UpdateMainReportValues -> with(it.report) { updateCounters(country.name, cases, deaths, recovered) }
+                is ViewState.UpdateMainReportValues -> with(it.report) {
+                    updateCounters(country.name, cases, deaths, recovered)
+                    updateWorldReportButtonVisibility(reportDataSet = this)
+                }
                 is ViewState.GoToDataviz            -> goToDatavizScreen()
                 ViewState.ShowLoading               -> homeLoadingIndicator.show()
                 ViewState.HideLoading               -> homeLoadingIndicator.hide()
@@ -60,15 +67,8 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
                 validMap.setOnMarkerClickListener(this)
 
                 setOnClusterItemClickListener {
-                    updateCounters(
-                        it.report.country.name,
-                        it.report.cases,
-                        it.report.deaths,
-                        it.report.recovered
-                    )
-
+                    viewModel.onMapItemClick(it.report.id)
                     validMap.animateCamera(CameraUpdateFactory.newLatLng(it.position))
-
                     true
                 }
 
@@ -78,9 +78,7 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
 
-            viewModel.reportsLiveData.observe(this, Observer {
-                updateMarkers(it)
-            })
+            viewModel.reportsLiveData.observe(this, Observer { updateMarkers(it) })
         }
     }
 
@@ -103,5 +101,15 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
         homeCasesCountTextView.text = confirmed.toString()
         homeRecoveredCountTextView.text = recovered.toString()
         homeDeathsCountTextView.text = deaths.toString()
+    }
+
+    private fun updateWorldReportButtonVisibility(reportDataSet: ReportDataSet) {
+        if (reportDataSet.id == 0) {
+            if (homeWorldReportButton.isVisible) {
+                homeWorldReportButton.hide()
+            }
+        } else if (!homeWorldReportButton.isVisible) {
+            homeWorldReportButton.show()
+        }
     }
 }

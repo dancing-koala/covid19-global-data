@@ -12,17 +12,17 @@ import org.kodein.di.generic.instance
 
 class HomeViewModel(application: Application) : BaseViewModel(application) {
 
-    private val internalReportsLiveData = MutableLiveData<List<ReportDataSet>>()
-
     val reportsLiveData: LiveData<List<ReportDataSet>>
         get() = internalReportsLiveData
-
-    private val internalViewStateLiveData = MutableLiveData<ViewState>()
 
     val viewStateLiveData: LiveData<ViewState>
         get() = internalViewStateLiveData
 
+    private val internalReportsLiveData = MutableLiveData<List<ReportDataSet>>()
+    private val internalViewStateLiveData = MutableLiveData<ViewState>()
     private val remoteDataRepository: LmaoNinjaApiRemoteDataRepository by kodein.instance()
+
+    private lateinit var worldReport: ReportDataSet
 
     fun start() {
         viewModelScope.launch {
@@ -33,7 +33,7 @@ class HomeViewModel(application: Application) : BaseViewModel(application) {
             internalReportsLiveData.value = tempWorldData
 
             if (tempWorldData.isNotEmpty()) {
-                val worldReport = tempWorldData.first { it.id == 0 }
+                worldReport = tempWorldData.first { it.id == 0 }
                 internalViewStateLiveData.value = ViewState.UpdateMainReportValues(worldReport)
             }
 
@@ -43,6 +43,16 @@ class HomeViewModel(application: Application) : BaseViewModel(application) {
 
     fun onDatavizButtonClick() {
         internalViewStateLiveData.value = ViewState.GoToDataviz
+    }
+
+    fun onWorldReportButtonClick() {
+        internalViewStateLiveData.value = ViewState.UpdateMainReportValues(worldReport)
+    }
+
+    fun onMapItemClick(itemId: Int) {
+        internalReportsLiveData.value?.firstOrNull { it.id == itemId }?.let {
+            internalViewStateLiveData.value = ViewState.UpdateMainReportValues(it)
+        }
     }
 
     sealed class ViewState {
