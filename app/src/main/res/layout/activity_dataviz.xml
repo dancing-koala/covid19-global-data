@@ -47,6 +47,17 @@
 
     </androidx.cardview.widget.CardView>
 
+    <TextView
+        android:id="@+id/datavizAdvice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/base_margin"
+        android:text="@string/dataviz_advice"
+        app:layout_constraintBottom_toBottomOf="@id/datavizDataCategorySpinnerCard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/datavizDataCategorySpinnerCard"
+        app:layout_constraintTop_toTopOf="@id/datavizDataCategorySpinnerCard" />
+
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/datavizLineChart"
         android:layout_width="match_parent"

@@ -173,11 +173,13 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
     private fun updateComponentsVisibility(subjects: List<DatavizSubject>) = if (subjects.isEmpty()) {
         datavizDataCategorySpinnerCard.hide()
         datavizLineChart.hide()
+        datavizAdvice.hide()
 
         datavizEmptyText.show()
     } else {
         datavizDataCategorySpinnerCard.show()
         datavizLineChart.show()
+        datavizAdvice.show()
 
         datavizEmptyText.hide()
     }
