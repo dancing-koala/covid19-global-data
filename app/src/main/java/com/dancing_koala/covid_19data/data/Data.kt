@@ -2,26 +2,6 @@ package com.dancing_koala.covid_19data.data
 
 import java.util.*
 
-data class DailyReport(
-    val state: String,
-    val country: String,
-    val lastUpdate: Date,
-    val confirmed: Int,
-    val deaths: Int,
-    val recovered: Int,
-    val active: Int,
-    val latitude: Double,
-    val longitude: Double
-)
-
-data class StateTimeSeries(
-    val state: String,
-    val country: String,
-    val latitude: Double,
-    val longitude: Double,
-    val perDayData: HashMap<String, Int>
-)
-
 data class AreaData(
     val localId: Int,
     val state: String,
@@ -35,13 +15,10 @@ data class AreaData(
     val confirmedPerDayData: HashMap<String, Int>,
     val deathsPerDayData: HashMap<String, Int>,
     val recoveredPerDayData: HashMap<String, Int>
-) {
-    val fullLabel: String = if (state.isEmpty() || country == state) country else "$state, $country"
-}
+)
 
 enum class DataCategory(val label: String) {
-    CASES("Cases"),
-    DEATHS("Deaths")
+    CASES("Cases"), DEATHS("Deaths")
 }
 
 data class Country(
@@ -77,8 +54,8 @@ data class TimeLineDataSet(
     val deathsTimeLine: TimeLine
 ) {
     val locationName = if (provinceName.isEmpty() || provinceName == countryName) {
-        countryName
+        countryName.capitalize()
     } else {
-        "$countryName, $provinceName"
+        "${countryName.capitalize()}, ${provinceName.capitalize()}"
     }
 }

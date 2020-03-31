@@ -12,6 +12,7 @@ import android.widget.BaseAdapter
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dancing_koala.covid_19data.R
 import com.dancing_koala.covid_19data.android.ColoredChipAdapter
@@ -21,7 +22,6 @@ import com.dancing_koala.covid_19data.core.ColorPool
 import com.dancing_koala.covid_19data.data.DataCategory
 import com.dancing_koala.covid_19data.data.TimeLineDataSet
 import com.dancing_koala.covid_19data.itemselection.ItemSelectionActivity
-import com.dancing_koala.covid_19data.itemselection.SelectableItem
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
@@ -35,7 +35,7 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
     }
 
     private val colorPool = ColorPool(
-        listOf("#1DE5BC", "#EA7369", "#EABD3C", "#C02223").reversed()
+        listOf("#1DE5BC", "#EA7369", "#EABD3C", "#C02223").shuffled()
     )
 
     private val simpleChipAdapter = ColoredChipAdapter()
@@ -53,11 +53,15 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
             setHomeButtonEnabled(true)
         }
 
-        datavizAddDataButton.setOnClickListener {
-            viewModel.onAddDataButtonClick()
-        }
-
         setUpChart()
+
+        datavizAddDataButton.setOnClickListener { viewModel.onAddDataButtonClick() }
+
+        viewModel.viewStateLiveData.observe(this, Observer {
+            when (it) {
+                DatavizViewModel.ViewState.ShowSelectionScreen -> showSelectionScreen()
+            }
+        })
 
         viewModel.start()
     }
@@ -183,8 +187,6 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
             Entry(index.toFloat(), this[key]?.toFloat() ?: 0f)
         }
     }
-
-    private fun TimeLineDataSet.toSelectableItem(): SelectableItem = SelectableItem(id, locationName)
 
     private fun TimeLineDataSet.toSimpleChipItem(backgroundColor: Color): ColoredChipItem =
         ColoredChipItem(id, locationName, backgroundColor)

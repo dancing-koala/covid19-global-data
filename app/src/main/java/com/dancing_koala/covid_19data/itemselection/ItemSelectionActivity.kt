@@ -15,7 +15,6 @@ import kotlinx.android.synthetic.main.activity_item_selection.*
 
 class ItemSelectionActivity : AppCompatActivity() {
     companion object {
-        const val EXTRA_ITEMS = "ItemSelectionActivity.extra.items"
         const val EXTRA_ITEM_SELECTED = "ItemSelectionActivity.extra.selecte_item"
     }
 
@@ -26,13 +25,6 @@ class ItemSelectionActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_item_selection)
-
-        val items = ItemSelectionBridge.consume()
-
-        if (items == null) {
-            cancel()
-            return
-        }
 
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
@@ -69,10 +61,9 @@ class ItemSelectionActivity : AppCompatActivity() {
                 is ViewState.FinishAsOk    -> setResultAndFinish(viewState.selectItemId)
                 ViewState.FinishAsCanceled -> cancel()
             }
-
         })
 
-        viewModel.start(items)
+        viewModel.start()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

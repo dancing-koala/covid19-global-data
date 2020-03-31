@@ -1,32 +1,41 @@
 package com.dancing_koala.covid_19data.itemselection
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import com.dancing_koala.covid_19data.android.BaseViewModel
+import com.dancing_koala.covid_19data.data.TimeLineDataSet
+import com.dancing_koala.covid_19data.network.lmaoninja.LmaoNinjaApiRemoteDataRepository
+import kotlinx.coroutines.launch
+import org.kodein.di.generic.instance
 import java.util.*
 
-class ItemSelectionViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val noneItem = SelectableItem(-1, "None")
+class ItemSelectionViewModel(application: Application) : BaseViewModel(application) {
 
     val viewStateLiveData: LiveData<ViewState>
         get() = internalViewStateLiveData
 
     private val internalViewStateLiveData = MutableLiveData<ViewState>()
+    private val dataRepository: LmaoNinjaApiRemoteDataRepository by kodein.instance()
+    private val baseItems = mutableListOf<SelectableItem>()
+    private val noneItem = SelectableItem(-1, "None")
 
-    private lateinit var baseItems: List<SelectableItem>
+    fun start() {
+        viewModelScope.launch {
+            val data = dataRepository.getCountriesTimeLines()
+            val selectableItems = data.map { it.toSelectableItem() }
 
-    fun start(items: List<SelectableItem>) {
-        baseItems =
-            if (items.isNotEmpty() && items.first() != noneItem) {
-                mutableListOf(noneItem).apply { addAll(items) }
-            } else {
-                items
+            println("ItemSelectionViewModel.start $selectableItems")
+
+            baseItems.apply {
+                clear()
+                add(noneItem)
+                addAll(selectableItems)
             }
 
-        onNewSearchQuery("")
-
+            onNewSearchQuery("")
+        }
     }
 
     fun onItemSelected(id: Int) {
@@ -48,6 +57,8 @@ class ItemSelectionViewModel(application: Application) : AndroidViewModel(applic
             }
         )
     }
+
+    private fun TimeLineDataSet.toSelectableItem() = SelectableItem(id, locationName)
 }
 
 

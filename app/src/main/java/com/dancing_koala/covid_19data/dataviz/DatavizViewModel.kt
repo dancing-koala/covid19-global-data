@@ -1,17 +1,18 @@
 package com.dancing_koala.covid_19data.dataviz
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.dancing_koala.covid_19data.android.BaseViewModel
 import com.dancing_koala.covid_19data.data.TimeLineDataSet
 import com.dancing_koala.covid_19data.network.lmaoninja.LmaoNinjaApiRemoteDataRepository
 import kotlinx.coroutines.launch
+import org.kodein.di.generic.instance
 
-class DatavizViewModel(application: Application) : AndroidViewModel(application) {
+class DatavizViewModel(application: Application) : BaseViewModel(application) {
 
-    private val remoteDataRepository = LmaoNinjaApiRemoteDataRepository()
+    private val remoteDataRepository: LmaoNinjaApiRemoteDataRepository by kodein.instance()
 
     private val internalTimeLineDataSetsLiveData = MutableLiveData<List<TimeLineDataSet>>()
 

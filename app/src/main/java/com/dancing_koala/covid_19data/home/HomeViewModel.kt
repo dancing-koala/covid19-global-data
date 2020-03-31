@@ -5,9 +5,11 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.dancing_koala.covid_19data.App
 import com.dancing_koala.covid_19data.data.ReportDataSet
 import com.dancing_koala.covid_19data.network.lmaoninja.LmaoNinjaApiRemoteDataRepository
 import kotlinx.coroutines.launch
+import org.kodein.di.generic.instance
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -21,7 +23,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     val viewStateLiveData: LiveData<ViewState>
         get() = internalViewStateLiveData
 
-    private val remoteDataRepository = LmaoNinjaApiRemoteDataRepository()
+    private val remoteDataRepository: LmaoNinjaApiRemoteDataRepository by (application as App).kodein.instance()
 
     fun start() {
         viewModelScope.launch {

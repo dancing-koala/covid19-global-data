@@ -107,12 +107,11 @@ class LmaoNinjaApiDataParser {
     }
 
     private fun JSONObject.toTimeLineDataSet(id: Int): TimeLineDataSet {
-
         val timeLineObject = getJSONObject("timeline")
 
         return TimeLineDataSet(
             id = id,
-            provinceName = optString("province", ""),
+            provinceName = optString("province").takeUnless { it == "null" } ?: "",
             countryName = getString("country"),
             casesTimeLine = timeLineObject.getJSONObject("cases").toTimeLine(),
             deathsTimeLine = timeLineObject.getJSONObject("deaths").toTimeLine()
@@ -146,10 +145,5 @@ class LmaoNinjaApiDataParser {
         var critical: Int = 0,
         var casesPerOneMillion: Int = 0,
         var deathsPerOneMillion: Int = 0
-    )
-
-    private class MutableTimeLineDataHolder(
-        val casesTimeLine: TimeLine = TimeLine(),
-        val deathsTimeLine: TimeLine = TimeLine()
     )
 }
