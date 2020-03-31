@@ -42,9 +42,7 @@ class ColoredChipAdapter(var callback: Callback? = null) : RecyclerView.Adapter<
     override fun getItemCount(): Int = data.size + 1
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (position == 0) {
-
-        } else {
+        if (getItemViewType(position) == VIEW_TYPE_ITEM) {
             val itemHolder = holder as ItemHolder
             val item = data[position - 1]
 
@@ -59,6 +57,7 @@ class ColoredChipAdapter(var callback: Callback? = null) : RecyclerView.Adapter<
             clear()
             addAll(chipItems)
         }
+
         notifyDataSetChanged()
     }
 

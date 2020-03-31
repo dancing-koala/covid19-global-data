@@ -30,7 +30,7 @@ class DatavizViewModel(application: Application) : BaseViewModel(application) {
         DataVizCategoryWithSubjects(currentDataCategory, listOf())
     )
 
-    private val colorPool = ColorPool(listOf("#1DE5BC", "#EA7369", "#EABD3C", "#C02223").shuffled())
+    private val colorPool = ColorPool(listOf("#1DE5BC", "#EA7369", "#EABD3C", "#5DBF63").shuffled())
     private val selectedSubjects = mutableListOf<DatavizSubject>()
 
     fun start() {
@@ -51,10 +51,18 @@ class DatavizViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun onAddDataButtonClick() {
-        internalViewStateLiveData.value = ViewState.ShowSelectionScreen
+        internalViewStateLiveData.value = if (colorPool.isEmpty) {
+            ViewState.MaximumSubjectsReached
+        } else {
+            ViewState.ShowSelectionScreen
+        }
     }
 
     fun onDataSetSelected(selectedId: Int) {
+        if (selectedId in selectedSubjects.map { it.timeLineDataSet.id }) {
+            return
+        }
+
         dataSets.firstOrNull { it.id == selectedId }?.let { dataSet ->
             colorPool.takeColor()?.let { color ->
                 val subject = DatavizSubject(dataSet, color)
@@ -84,11 +92,11 @@ class DatavizViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-
     sealed class ViewState {
         object ShowLoading : ViewState()
         object HideLoading : ViewState()
         object ShowSelectionScreen : ViewState()
         class ShowLabels(val labels: List<String>) : ViewState()
+        object MaximumSubjectsReached : ViewState()
     }
 }

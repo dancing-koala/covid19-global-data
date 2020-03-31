@@ -2,6 +2,7 @@
 <resources>
     <dimen name="base_margin_xxs">4dp</dimen>
     <dimen name="base_margin_xs">8dp</dimen>
+    <dimen name="base_margin_s">12dp</dimen>
     <dimen name="base_margin">16dp</dimen>
     <dimen name="base_margin_xl">24dp</dimen>
     <dimen name="base_margin_xxl">32dp</dimen>
@@ -13,4 +14,5 @@
     <dimen name="icon_refresh_size">32dp</dimen>
     <dimen name="splashscreen_text_size">18sp</dimen>
     <dimen name="base_cardview_corner_radius">8dp</dimen>
+    <dimen name="base_elevation">1dp</dimen>
 </resources>

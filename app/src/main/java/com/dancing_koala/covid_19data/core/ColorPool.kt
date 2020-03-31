@@ -11,6 +11,9 @@ class ColorPool(hexColors: List<String>) {
 
     private val usedColors = mutableListOf<Color>()
 
+    val isEmpty: Boolean
+        get() = availableColors.isEmpty()
+
     fun takeColor(): Color? =
         if (availableColors.isNotEmpty()) {
             availableColors.pop()?.apply { usedColors.add(this) }

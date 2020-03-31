@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.chip.Chip xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/Widget.MaterialComponents.Chip.Entry"
+    style="@style/Widget.MaterialComponents.Chip.Action"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginEnd="@dimen/base_margin_xs"
-    android:checkable="false"
-    app:closeIconEnabled="false"
+    android:elevation="@dimen/base_elevation"
     android:text="Add"
-    app:chipIcon="@drawable/ic_add"/>
+    app:chipBackgroundColor="@color/primaryColor"
+    app:chipIcon="@drawable/ic_add" />

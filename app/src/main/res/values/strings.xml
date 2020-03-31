@@ -1,12 +1,9 @@
 <resources>
     <string name="app_name">Covid-19 Data</string>
-    <string name="fetching_current_data">Fetching current data</string>
-    <string name="fetching_confirmed_time_series">Fetching confirmed time series</string>
-    <string name="fetching_deaths_time_series">Fetching deaths time series</string>
-    <string name="fetching_recovered_time_series">Fetching recovered time series</string>
-    <string name="processing_data">Processing data...</string>
     <string name="home_cases_label">cases</string>
     <string name="home_recovered_label">recovered</string>
     <string name="home_deaths_label">deaths</string>
-    <string name="home_loading_data">Loading current data...</string>
+    <string name="home_loading_data">Loading current data…</string>
+    <string name="dataviz_maximum_reached">Maximum reached !</string>
+    <string name="dataviz_no_data_text">Click the <strong>+</strong> button and select a country to visualize its data.</string>
 </resources>

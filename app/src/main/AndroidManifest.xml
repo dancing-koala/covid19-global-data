@@ -16,14 +16,14 @@
 
         <activity
             android:name=".home.HomeActivity"
-            android:theme="@style/AppTheme.HomeScreen" />
-
-        <activity android:name=".dataviz.DatavizActivity">
+            android:theme="@style/AppTheme.HomeScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".dataviz.DatavizActivity" />
 
         <activity android:name=".itemselection.ItemSelectionActivity" />
 

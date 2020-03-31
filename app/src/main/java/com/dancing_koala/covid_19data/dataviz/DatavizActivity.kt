@@ -10,13 +10,17 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.BaseAdapter
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dancing_koala.covid_19data.R
 import com.dancing_koala.covid_19data.android.ColoredChipAdapter
 import com.dancing_koala.covid_19data.android.ColoredChipItem
+import com.dancing_koala.covid_19data.android.hide
+import com.dancing_koala.covid_19data.android.show
 import com.dancing_koala.covid_19data.data.DataCategory
 import com.dancing_koala.covid_19data.dataviz.DatavizViewModel.ViewState
 import com.dancing_koala.covid_19data.itemselection.ItemSelectionActivity
@@ -26,6 +30,8 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
 import kotlinx.android.synthetic.main.activity_dataviz.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
     companion object {
@@ -43,6 +49,7 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setHomeButtonEnabled(true)
+            setHomeAsUpIndicator(R.drawable.ic_close)
         }
 
         setUpChart()
@@ -84,8 +91,8 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
     private fun setUpViewModel() {
         viewModel.viewStateLiveData.observe(this, Observer {
             when (it) {
-                ViewState.ShowSelectionScreen -> showSelectionScreen()
-                is ViewState.ShowLabels       -> {
+                ViewState.ShowSelectionScreen    -> showSelectionScreen()
+                is ViewState.ShowLabels          -> {
                     val customValueFormatter = object : ValueFormatter() {
                         private val labels = it.labels
                         override fun getFormattedValue(value: Float): String = labels[value.toInt()]
@@ -96,12 +103,14 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
                         invalidate()
                     }
                 }
+                ViewState.MaximumSubjectsReached -> showMaximumSubjectsReached()
             }
         })
 
         viewModel.subjectsLiveData.observe(this, Observer {
             updateChips(it.subjects)
             updateChart(it)
+            updateComponentsVisibility(it.subjects)
         })
     }
 
@@ -125,13 +134,10 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
         }
     }
 
-    override fun onChipCloseClick(coloredChipItem: ColoredChipItem) {
+    override fun onChipCloseClick(coloredChipItem: ColoredChipItem) =
         viewModel.onRemoveItemClick(coloredChipItem.id)
-    }
 
-    override fun onAddButtonChipClick() {
-        viewModel.onAddDataButtonClick()
-    }
+    override fun onAddButtonChipClick() = viewModel.onAddDataButtonClick()
 
     private fun updateChart(dataVizCategoryWithSubjects: DataVizCategoryWithSubjects) {
         datavizLineChart.data.clearValues()
@@ -148,30 +154,43 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
                 color = subject.associatedColor.intValue
                 setDrawCircles(false)
                 setDrawValues(false)
-
                 lineWidth = 2f
             }
 
             datavizLineChart.data.addDataSet(lineDataSet)
         }
 
-        datavizLineChart.invalidate()
+        lifecycleScope.launch {
+            delay(250)
+            datavizLineChart.invalidate()
+        }
     }
 
-    private fun updateChips(subjects: List<DatavizSubject>) {
-        simpleChipAdapter.updateChips(subjects.map { it.toSimpleChipItem() })
+    private fun updateComponentsVisibility(subjects: List<DatavizSubject>) = if (subjects.isEmpty()) {
+        datavizDataCategorySpinnerCard.hide()
+        datavizLineChart.hide()
+
+        datavizEmptyText.show()
+    } else {
+        datavizDataCategorySpinnerCard.show()
+        datavizLineChart.show()
+
+        datavizEmptyText.hide()
     }
+
+    private fun updateChips(subjects: List<DatavizSubject>) =
+        simpleChipAdapter.updateChips(subjects.map { it.toSimpleChipItem() }.reversed())
 
     private fun showSelectionScreen() {
         val intent = Intent(this, ItemSelectionActivity::class.java)
         startActivityForResult(intent, SELECTION_REQUEST_CODE)
     }
 
-    private fun HashMap<String, Int>.toChartEntries(): List<Entry> {
-        return keys.sorted().mapIndexed { index, key ->
-            Entry(index.toFloat(), this[key]?.toFloat() ?: 0f)
-        }
-    }
+    private fun showMaximumSubjectsReached() =
+        Toast.makeText(this, getString(R.string.dataviz_maximum_reached), Toast.LENGTH_SHORT).show()
+
+    private fun HashMap<String, Int>.toChartEntries(): List<Entry> =
+        keys.sorted().mapIndexed { index, key -> Entry(index.toFloat(), this[key]?.toFloat() ?: 0f) }
 
     private fun DatavizSubject.toSimpleChipItem(): ColoredChipItem =
         ColoredChipItem(timeLineDataSet.id, timeLineDataSet.locationName, associatedColor)

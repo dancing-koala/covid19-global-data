@@ -4,14 +4,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     android:clipChildren="false"
     android:clipToPadding="false"
     android:padding="@dimen/base_margin">
+
+    <TextView
+        android:id="@+id/datavizEmptyText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/base_margin"
+        android:gravity="center"
+        android:text="@string/dataviz_no_data_text"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/datavizSubjectSlider"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/item_dataviz_subject" />
 
@@ -20,6 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/base_margin"
+        app:cardBackgroundColor="@color/primaryColor"
         app:cardCornerRadius="@dimen/base_cardview_corner_radius"
         app:contentPadding="@dimen/base_margin_xxs"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,13 +44,14 @@
             android:id="@+id/datavizDataCategorySpinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+
     </androidx.cardview.widget.CardView>
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/datavizLineChart"
-        android:layout_marginTop="@dimen/base_margin"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="@dimen/base_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/datavizDataCategorySpinnerCard" />
 

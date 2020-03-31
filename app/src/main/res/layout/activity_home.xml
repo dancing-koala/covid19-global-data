@@ -11,101 +11,108 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/homeCountersContainer"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.cardview.widget.CardView
         android:id="@+id/homeCountersContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:orientation="vertical"
-        android:padding="@dimen/base_margin"
+        android:layout_margin="@dimen/base_margin_s"
+        app:cardCornerRadius="@dimen/base_cardview_corner_radius"
+        app:contentPadding="@dimen/base_margin"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <TextView
-            android:id="@+id/homeDataSetNameTextView"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
-            android:textColor="@color/primaryText"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Worldwide" />
+            android:layout_height="wrap_content">
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/homeCountersContainerThird"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent=".3333" />
+            <TextView
+                android:id="@+id/homeDataSetNameTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+                android:textColor="@color/primaryTextColor"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Worldwide" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/homeCountersContainerTwoThird"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent=".6666" />
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/homeCountersContainerThird"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent=".3333" />
 
-        <TextView
-            android:id="@+id/homeCasesLabelTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/base_margin_xs"
-            android:layout_marginEnd="@dimen/base_margin"
-            android:text="@string/home_cases_label"
-            android:textColor="@color/secondaryText"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/homeDataSetNameTextView" />
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/homeCountersContainerTwoThird"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent=".6666" />
 
-        <TextView
-            android:id="@+id/homeCasesCountTextView"
-            style="@style/AppTheme.HomeScreen.Counter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/confirmed"
-            app:layout_constraintStart_toStartOf="@id/homeCasesLabelTextView"
-            app:layout_constraintTop_toBottomOf="@id/homeCasesLabelTextView"
-            tools:text="1233456789" />
+            <TextView
+                android:id="@+id/homeCasesLabelTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/base_margin_xs"
+                android:layout_marginEnd="@dimen/base_margin"
+                android:text="@string/home_cases_label"
+                android:textColor="@color/secondaryTextColor"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/homeDataSetNameTextView" />
 
-        <TextView
-            android:id="@+id/homeRecoveredLabelTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/home_recovered_label"
-            android:textColor="@color/secondaryText"
-            app:layout_constraintStart_toStartOf="@id/homeCountersContainerThird"
-            app:layout_constraintTop_toTopOf="@id/homeCasesLabelTextView" />
+            <TextView
+                android:id="@+id/homeCasesCountTextView"
+                style="@style/AppTheme.HomeScreen.Counter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/confirmed"
+                app:layout_constraintStart_toStartOf="@id/homeCasesLabelTextView"
+                app:layout_constraintTop_toBottomOf="@id/homeCasesLabelTextView"
+                tools:text="1233456789" />
 
-        <TextView
-            android:id="@+id/homeRecoveredCountTextView"
-            style="@style/AppTheme.HomeScreen.Counter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/recovered"
-            app:layout_constraintStart_toStartOf="@id/homeRecoveredLabelTextView"
-            app:layout_constraintTop_toBottomOf="@id/homeRecoveredLabelTextView"
-            tools:text="1233456789" />
+            <TextView
+                android:id="@+id/homeRecoveredLabelTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/home_recovered_label"
+                android:textColor="@color/secondaryTextColor"
+                app:layout_constraintStart_toStartOf="@id/homeCountersContainerThird"
+                app:layout_constraintTop_toTopOf="@id/homeCasesLabelTextView" />
 
-        <TextView
-            android:id="@+id/homeDeathsLabelTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/home_deaths_label"
-            android:textColor="@color/secondaryText"
-            app:layout_constraintStart_toStartOf="@id/homeCountersContainerTwoThird"
-            app:layout_constraintTop_toTopOf="@id/homeCasesLabelTextView" />
+            <TextView
+                android:id="@+id/homeRecoveredCountTextView"
+                style="@style/AppTheme.HomeScreen.Counter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/recovered"
+                app:layout_constraintStart_toStartOf="@id/homeRecoveredLabelTextView"
+                app:layout_constraintTop_toBottomOf="@id/homeRecoveredLabelTextView"
+                tools:text="1233456789" />
 
-        <TextView
-            android:id="@+id/homeDeathsCountTextView"
-            style="@style/AppTheme.HomeScreen.Counter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/death"
-            app:layout_constraintStart_toStartOf="@id/homeDeathsLabelTextView"
-            app:layout_constraintTop_toBottomOf="@id/homeDeathsLabelTextView"
-            tools:text="1233456789" />
+            <TextView
+                android:id="@+id/homeDeathsLabelTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/home_deaths_label"
+                android:textColor="@color/secondaryTextColor"
+                app:layout_constraintStart_toStartOf="@id/homeCountersContainerTwoThird"
+                app:layout_constraintTop_toTopOf="@id/homeCasesLabelTextView" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/homeDeathsCountTextView"
+                style="@style/AppTheme.HomeScreen.Counter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/death"
+                app:layout_constraintStart_toStartOf="@id/homeDeathsLabelTextView"
+                app:layout_constraintTop_toBottomOf="@id/homeDeathsLabelTextView"
+                tools:text="1233456789" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/homeDatavizButton"
