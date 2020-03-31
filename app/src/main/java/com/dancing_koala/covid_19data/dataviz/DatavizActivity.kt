@@ -72,13 +72,16 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
         datavizSubjectSlider.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         datavizSubjectSlider.adapter = simpleChipAdapter
 
-        datavizLineChart.description?.isEnabled = false
-        datavizLineChart.isAutoScaleMinMaxEnabled = true
-        datavizLineChart.data = LineData()
-        datavizLineChart.legend.isEnabled = false
+        datavizLineChart.apply {
+            description?.isEnabled = false
+            isAutoScaleMinMaxEnabled = true
+            data = LineData()
+            legend.isEnabled = false
+        }
 
         datavizLineChart.xAxis.apply {
             setDrawLabels(true)
+            labelRotationAngle = -45f
             position = XAxis.XAxisPosition.BOTTOM
         }
 
@@ -202,7 +205,6 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
             val view = convertView ?: LayoutInflater.from(parent?.context).inflate(R.layout.item_data_catagory, parent, false)
             (view as TextView).text = getItem(position)
-
             return view
         }
 
