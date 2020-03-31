@@ -8,37 +8,35 @@
     android:clipToPadding="false"
     android:padding="@dimen/base_margin">
 
-    <Button
-        android:id="@+id/datavizAddDataButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add data"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Spinner
-        android:id="@+id/graphDataCategorySpinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/base_margin"
-        app:layout_constraintBottom_toBottomOf="@id/datavizAddDataButton"
-        app:layout_constraintStart_toEndOf="@id/datavizAddDataButton"
-        app:layout_constraintTop_toTopOf="@id/datavizAddDataButton" />
-
-
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/graphSubjectSlider"
+        android:id="@+id/datavizSubjectSlider"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/base_margin"
-        app:layout_constraintTop_toBottomOf="@id/datavizAddDataButton"
+        app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/item_dataviz_subject" />
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/datavizDataCategorySpinnerCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/base_margin"
+        app:cardCornerRadius="@dimen/base_cardview_corner_radius"
+        app:contentPadding="@dimen/base_margin_xxs"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/datavizSubjectSlider">
+
+        <Spinner
+            android:id="@+id/datavizDataCategorySpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </androidx.cardview.widget.CardView>
+
     <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/graphLineChart"
+        android:id="@+id/datavizLineChart"
+        android:layout_marginTop="@dimen/base_margin"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/graphSubjectSlider" />
+        app:layout_constraintTop_toBottomOf="@id/datavizDataCategorySpinnerCard" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

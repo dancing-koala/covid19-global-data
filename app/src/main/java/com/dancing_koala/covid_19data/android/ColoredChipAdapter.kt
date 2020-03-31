@@ -10,47 +10,67 @@ import com.dancing_koala.covid_19data.core.Color
 import com.google.android.material.chip.Chip
 
 
-class ColoredChipAdapter : RecyclerView.Adapter<ColoredChipAdapter.Holder>() {
+class ColoredChipAdapter(var callback: Callback? = null) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+
+    companion object {
+        const val VIEW_TYPE_ADD_BUTTON = 0
+        const val VIEW_TYPE_ITEM = 1
+    }
 
     private val data = mutableListOf<ColoredChipItem>()
 
-    var callback: Callback? = null
+    override fun getItemViewType(position: Int): Int = when (position) {
+        0    -> VIEW_TYPE_ADD_BUTTON
+        else -> VIEW_TYPE_ITEM
+    }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
-        val holder = Holder(LayoutInflater.from(parent.context).inflate(R.layout.item_dataviz_subject, parent, false))
-        holder.chip.setOnCloseIconClickListener {
-            callback?.onChipCloseClick(coloredChipItem = data[holder.currentPosition])
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == VIEW_TYPE_ADD_BUTTON) {
+            AddButtonHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_dataviz_add_button, parent, false)).apply {
+                itemView.setOnClickListener { callback?.onAddButtonChipClick() }
+            }
+        } else {
+            ItemHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_dataviz_subject, parent, false)).apply {
+                chip.setOnCloseIconClickListener {
+                    callback?.onChipCloseClick(coloredChipItem = data[currentPosition - 1])
+                }
+            }
         }
-        return holder
     }
 
-    override fun getItemCount(): Int = data.size
+    override fun getItemCount(): Int = data.size + 1
 
-    override fun onBindViewHolder(holder: Holder, position: Int) {
-        val item = data[position]
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (position == 0) {
 
-        holder.chip.chipBackgroundColor = ColorStateList.valueOf(item.backgroundColor.intValue)
-        holder.chip.text = item.label
-        holder.currentPosition = position
+        } else {
+            val itemHolder = holder as ItemHolder
+            val item = data[position - 1]
+
+            itemHolder.chip.chipBackgroundColor = ColorStateList.valueOf(item.backgroundColor.intValue)
+            itemHolder.chip.text = item.label
+            itemHolder.currentPosition = position
+        }
     }
 
-    fun addChip(coloredChipItem: ColoredChipItem) {
-        data.add(coloredChipItem)
-        notifyItemInserted(data.lastIndex)
+    fun updateChips(chipItems: List<ColoredChipItem>) {
+        data.apply {
+            clear()
+            addAll(chipItems)
+        }
+        notifyDataSetChanged()
     }
 
-    fun removeChip(coloredChipItem: ColoredChipItem) {
-        val itemIndex = data.indexOf(coloredChipItem)
-        data.remove(coloredChipItem)
-        notifyItemRemoved(itemIndex)
-    }
+    class AddButtonHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
-    class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val chip = itemView as Chip
         var currentPosition = RecyclerView.NO_POSITION
     }
 
     interface Callback {
+        fun onAddButtonChipClick()
         fun onChipCloseClick(coloredChipItem: ColoredChipItem)
     }
 }

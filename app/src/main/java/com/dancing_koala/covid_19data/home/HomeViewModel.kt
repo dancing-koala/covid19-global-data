@@ -1,17 +1,16 @@
 package com.dancing_koala.covid_19data.home
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.dancing_koala.covid_19data.App
+import com.dancing_koala.covid_19data.android.BaseViewModel
 import com.dancing_koala.covid_19data.data.ReportDataSet
 import com.dancing_koala.covid_19data.network.lmaoninja.LmaoNinjaApiRemoteDataRepository
 import kotlinx.coroutines.launch
 import org.kodein.di.generic.instance
 
-class HomeViewModel(application: Application) : AndroidViewModel(application) {
+class HomeViewModel(application: Application) : BaseViewModel(application) {
 
     private val internalReportsLiveData = MutableLiveData<List<ReportDataSet>>()
 
@@ -23,7 +22,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     val viewStateLiveData: LiveData<ViewState>
         get() = internalViewStateLiveData
 
-    private val remoteDataRepository: LmaoNinjaApiRemoteDataRepository by (application as App).kodein.instance()
+    private val remoteDataRepository: LmaoNinjaApiRemoteDataRepository by kodein.instance()
 
     fun start() {
         viewModelScope.launch {
@@ -52,5 +51,4 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         object ShowLoading : ViewState()
         object HideLoading : ViewState()
     }
-
 }

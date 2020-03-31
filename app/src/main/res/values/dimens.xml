@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="base_margin_xxs">4dp</dimen>
     <dimen name="base_margin_xs">8dp</dimen>
     <dimen name="base_margin">16dp</dimen>
     <dimen name="base_margin_xl">24dp</dimen>

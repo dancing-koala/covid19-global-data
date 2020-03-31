@@ -5,6 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.dancing_koala.covid_19data.android.BaseViewModel
+import com.dancing_koala.covid_19data.core.ColorPool
+import com.dancing_koala.covid_19data.data.DataCategory
 import com.dancing_koala.covid_19data.data.TimeLineDataSet
 import com.dancing_koala.covid_19data.network.lmaoninja.LmaoNinjaApiRemoteDataRepository
 import kotlinx.coroutines.launch
@@ -12,21 +14,37 @@ import org.kodein.di.generic.instance
 
 class DatavizViewModel(application: Application) : BaseViewModel(application) {
 
-    private val remoteDataRepository: LmaoNinjaApiRemoteDataRepository by kodein.instance()
-
-    private val internalTimeLineDataSetsLiveData = MutableLiveData<List<TimeLineDataSet>>()
-
-    private val internalViewStateLiveData = MutableLiveData<ViewState>()
-
     val viewStateLiveData: LiveData<ViewState>
         get() = internalViewStateLiveData
+
+    val subjectsLiveData: LiveData<DataVizCategoryWithSubjects>
+        get() = internalSubjectsLiveData
+
+
+    private var currentDataCategory = DataCategory.CASES
+
+    private val remoteDataRepository: LmaoNinjaApiRemoteDataRepository by kodein.instance()
+    private val dataSets = mutableListOf<TimeLineDataSet>()
+    private val internalViewStateLiveData = MutableLiveData<ViewState>()
+    private val internalSubjectsLiveData = MutableLiveData(
+        DataVizCategoryWithSubjects(currentDataCategory, listOf())
+    )
+
+    private val colorPool = ColorPool(listOf("#1DE5BC", "#EA7369", "#EABD3C", "#C02223").shuffled())
+    private val selectedSubjects = mutableListOf<DatavizSubject>()
 
     fun start() {
         viewModelScope.launch {
             internalViewStateLiveData.value = ViewState.ShowLoading
 
             val timeLineDataSets = remoteDataRepository.getCountriesTimeLines()
-            internalTimeLineDataSetsLiveData.value = timeLineDataSets
+            dataSets.apply {
+                clear()
+                addAll(timeLineDataSets)
+            }
+
+            val labels = dataSets.first().casesTimeLine.keys.sorted()
+            internalViewStateLiveData.value = ViewState.ShowLabels(labels)
 
             internalViewStateLiveData.value = ViewState.HideLoading
         }
@@ -36,9 +54,41 @@ class DatavizViewModel(application: Application) : BaseViewModel(application) {
         internalViewStateLiveData.value = ViewState.ShowSelectionScreen
     }
 
+    fun onDataSetSelected(selectedId: Int) {
+        dataSets.firstOrNull { it.id == selectedId }?.let { dataSet ->
+            colorPool.takeColor()?.let { color ->
+                val subject = DatavizSubject(dataSet, color)
+                selectedSubjects.add(subject)
+                notifyNewSelectedSubjects()
+            }
+        }
+    }
+
+    fun onDataCategorySelected(position: Int) {
+        currentDataCategory = DataCategory.values()[position]
+        notifyNewSelectedSubjects()
+    }
+
+    private fun notifyNewSelectedSubjects() {
+        internalSubjectsLiveData.value = DataVizCategoryWithSubjects(
+            currentDataCategory,
+            selectedSubjects.toList()//Pass a copy for safety
+        )
+    }
+
+    fun onRemoveItemClick(id: Int) {
+        selectedSubjects.firstOrNull { it.timeLineDataSet.id == id }?.let { subject ->
+            selectedSubjects.remove(subject)
+            colorPool.recycleColor(subject.associatedColor)
+            notifyNewSelectedSubjects()
+        }
+    }
+
+
     sealed class ViewState {
         object ShowLoading : ViewState()
         object HideLoading : ViewState()
         object ShowSelectionScreen : ViewState()
+        class ShowLabels(val labels: List<String>) : ViewState()
     }
 }
