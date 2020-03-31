@@ -6,9 +6,5 @@
     android:layout_height="@dimen/base_map_marker_size"
     android:background="@drawable/bg_map_marker"
     android:gravity="center"
-    android:shadowColor="#333"
-    android:shadowDx="0"
-    android:shadowDy="0"
-    android:shadowRadius="8.0"
     android:textColor="@android:color/white"
     tools:text="234" />
