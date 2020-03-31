@@ -5,5 +5,8 @@
     <string name="home_deaths_label">deaths</string>
     <string name="home_loading_data">Loading current data…</string>
     <string name="dataviz_maximum_reached">Maximum reached !</string>
-    <string name="dataviz_no_data_text">Click the <strong>+</strong> button and select a country to visualize its data.</string>
+    <string name="dataviz_no_data_text">Click the <strong>+</strong> button and select a country to visualize its data</string>
+    <string name="item_selection_search_hint">Search a country or province…</string>
+    <string name="item_selection_screen_title">Data selection</string>
+    <string name="dataviz_screen_title">Data visualization</string>
 </resources>

@@ -50,6 +50,7 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
             setDisplayHomeAsUpEnabled(true)
             setHomeButtonEnabled(true)
             setHomeAsUpIndicator(R.drawable.ic_close)
+            title = getString(R.string.dataviz_screen_title)
         }
 
         setUpChart()

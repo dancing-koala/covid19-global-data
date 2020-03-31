@@ -4,21 +4,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/itemSelectionSearchField"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/itemSelectionSearchFieldCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Country"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_margin="@dimen/base_margin_s"
+        app:cardCornerRadius="@dimen/base_cardview_corner_radius"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/itemSelectionSearchField"
+            style="@style/AppTheme.ItemSelection.SearchView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:iconifiedByDefault="false"
+            app:queryHint="@string/item_selection_search_hint" />
+    </androidx.cardview.widget.CardView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/itemSelectionRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="@dimen/base_margin"
+        android:clipChildren="false"
         android:clipToPadding="false"
-        android:paddingBottom="@dimen/base_margin_xxxl"
+        android:paddingBottom="@dimen/base_margin"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/itemSelectionSearchField" />
+        app:layout_constraintTop_toBottomOf="@id/itemSelectionSearchFieldCard" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

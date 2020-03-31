@@ -9,6 +9,8 @@
     <color name="primaryTextColor">#000000</color>
     <color name="secondaryTextColor">#000000</color>
 
+    <color name="grayish">#DE000000</color>
+
     <color name="confirmed">#f9bc60</color>
     <color name="recovered">#4CAF50</color>
     <color name="death">#e16162</color>

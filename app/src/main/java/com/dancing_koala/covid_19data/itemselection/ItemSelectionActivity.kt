@@ -28,7 +28,7 @@ class ItemSelectionActivity : AppCompatActivity() {
 
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
-            title = "Country selection"
+            title = getString(R.string.item_selection_screen_title)
         }
 
         itemSelectionRecyclerView.apply {
