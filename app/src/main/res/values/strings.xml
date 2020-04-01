@@ -10,4 +10,6 @@
     <string name="item_selection_screen_title">Data selection</string>
     <string name="dataviz_screen_title">Data visualization</string>
     <string name="dataviz_advice">Try pinching the chart vertically and horizontally.</string>
+    <string name="internet_connection_error_retry">There seems to be a problem with the network. Please check your internet connection and retry.</string>
+    <string name="button_retry">Retry</string>
 </resources>

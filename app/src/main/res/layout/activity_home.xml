@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     tools:context=".home.HomeActivity">
 
     <androidx.fragment.app.FragmentContainerView
@@ -165,7 +166,12 @@
                 android:text="@string/home_loading_data" />
         </LinearLayout>
 
-
     </androidx.cardview.widget.CardView>
+
+    <include
+        layout="@layout/component_error_banner"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

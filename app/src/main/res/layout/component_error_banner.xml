@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bannerError"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/design_default_color_error"
+    android:orientation="horizontal"
+    android:padding="@dimen/base_margin"
+    app:layout_constraintTop_toTopOf="parent">
+
+    <TextView
+        android:id="@+id/bannerErrorText"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:text="@string/internet_connection_error_retry"
+        android:textColor="@color/primaryLightColor"
+        app:layout_constraintBottom_toBottomOf="@id/bannerErrorRetryButton"
+        app:layout_constraintEnd_toStartOf="@id/bannerErrorRetryButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/bannerErrorRetryButton" />
+
+    <Button
+        android:id="@+id/bannerErrorRetryButton"
+        style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:text="@string/button_retry"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

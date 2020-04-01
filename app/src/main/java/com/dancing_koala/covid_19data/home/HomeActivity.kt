@@ -2,7 +2,6 @@ package com.dancing_koala.covid_19data.home
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -21,6 +20,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.maps.android.clustering.ClusterManager
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.component_error_banner.*
 
 class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -41,6 +41,8 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
         homeWorldReportButton.setOnClickListener { viewModel.onWorldReportButtonClick() }
         homeWorldReportButton.hide()
 
+        bannerErrorRetryButton.setOnClickListener { viewModel.onErrorRetryButtonClick() }
+
         viewModel.viewStateLiveData.observe(this, Observer {
             when (it) {
                 is ViewState.UpdateMainReportValues -> with(it.report) {
@@ -51,6 +53,7 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
                 ViewState.ShowLoading               -> homeLoadingIndicator.show()
                 ViewState.HideLoading               -> homeLoadingIndicator.hide()
                 ViewState.ShowNetworkError          -> showNetworkError()
+                ViewState.HideNetworkError          -> hideNetworkError()
             }
         })
 
@@ -115,10 +118,7 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun showNetworkError() =
-        Toast.makeText(
-            this,
-            "There seems to be a problem with the network. Please check your connection and retry",
-            Toast.LENGTH_LONG
-        ).show()
+    private fun showNetworkError() = bannerError.show()
+
+    private fun hideNetworkError() = bannerError.hide()
 }

@@ -32,6 +32,7 @@ class HomeViewModel(application: Application) : BaseViewModel(application) {
             val reportDataSetsResult = dataRepository.getReportDataSets()
 
             if (reportDataSetsResult is ApiResult.Success) {
+                _viewStateLiveData.value = ViewState.HideNetworkError
                 val reportDataSets = reportDataSetsResult.value as List<ReportDataSet>
 
                 internalReportsLiveData.value = reportDataSets
@@ -67,12 +68,15 @@ class HomeViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    fun onErrorRetryButtonClick() = start()
+
     sealed class ViewState {
         class UpdateMainReportValues(val report: ReportDataSet) : ViewState()
         object GoToDataviz : ViewState()
         object ShowLoading : ViewState()
         object HideLoading : ViewState()
         object ShowNetworkError : ViewState()
+        object HideNetworkError : ViewState()
         object ShowUnknownError : ViewState()
     }
 }
