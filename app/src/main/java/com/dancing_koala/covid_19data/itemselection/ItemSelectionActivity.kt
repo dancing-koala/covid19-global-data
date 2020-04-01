@@ -57,7 +57,10 @@ class ItemSelectionActivity : BaseActivity<ItemSelectionViewModel>() {
 
         viewModel.viewStateLiveData.observe(this, Observer { viewState ->
             when (viewState) {
-                is ViewState.UpdateItems   -> selectableItemAdapter.updateItems(viewState.items)
+                is ViewState.UpdateItems   -> {
+                    selectableItemAdapter.updateItems(viewState.items)
+                    itemSelectionRecyclerView.scrollTo(0, 0)
+                }
                 is ViewState.FinishAsOk    -> setResultAndFinish(viewState.selectItemId)
                 ViewState.FinishAsCanceled -> cancel()
             }

@@ -53,10 +53,8 @@ class ItemSelectionViewModel(application: Application) : BaseViewModel(applicati
 
     fun onNewSearchQuery(newText: String?) {
         internalViewStateLiveData.value = ViewState.UpdateItems(
-            baseItems.toList().filter {
-                it.label
-                    .toLowerCase(Locale.ROOT)
-                    .contains(newText ?: "")
+            baseItems.filter {
+                it.label.toLowerCase(Locale.ROOT).contains(newText ?: "")
             }
         )
     }
