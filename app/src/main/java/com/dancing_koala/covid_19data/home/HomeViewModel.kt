@@ -28,12 +28,11 @@ class HomeViewModel(application: Application) : BaseViewModel(application) {
         viewModelScope.launch {
             internalViewStateLiveData.value = ViewState.ShowLoading
 
-            val tempWorldData = remoteDataRepository.getCountriesReports()
+            val reportDataSets= remoteDataRepository.getReportDataSets()
+            internalReportsLiveData.value = reportDataSets
 
-            internalReportsLiveData.value = tempWorldData
-
-            if (tempWorldData.isNotEmpty()) {
-                worldReport = tempWorldData.first { it.id == 0 }
+            if (reportDataSets.isNotEmpty()) {
+                worldReport = reportDataSets.first { it.id == 0 }
                 internalViewStateLiveData.value = ViewState.UpdateMainReportValues(worldReport)
             }
 

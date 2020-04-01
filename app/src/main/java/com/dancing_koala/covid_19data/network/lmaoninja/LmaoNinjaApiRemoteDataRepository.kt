@@ -7,6 +7,7 @@ import com.dancing_koala.covid_19data.network.BaseService
 import com.dancing_koala.covid_19data.persistence.Cache
 import com.dancing_koala.covid_19data.persistence.CacheDao
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.kodein.di.Kodein
@@ -30,29 +31,29 @@ class LmaoNinjaApiRemoteDataRepository(kodein: Kodein) {
     private val reportsKey = "$keyPrefix-reports"
     private val timeLinesKey = "$keyPrefix-timeLines"
 
-    suspend fun getCountriesReports(): List<ReportDataSet> = withContext(Dispatchers.IO) {
-        val result = service.fetchCountriesData()
-
-        if (result is BaseService.Result.Success) {
-            parser.parseCountriesData(result.data)
-        } else {
-            listOf()
-        }
+    suspend fun getReportDataSets(): List<ReportDataSet> = withContext(Dispatchers.IO) {
+        val data = fromCacheOrFetch(reportsKey, "[]") { service.fetchCountriesData() }
+        parser.parseReportDataSets(data)
     }
 
-    suspend fun getCountriesTimeLines(): List<TimeLineDataSet> = withContext(Dispatchers.IO) {
-        val cachedResponse = cacheDao.getByKey(timeLinesKey)
-
-        val data = if (cachedResponse == null) {
-            val result = service.fetchHistoricalV2()
-            if (result is BaseService.Result.Success) {
-                launch { cacheDao.insertEntry(Cache(timeLinesKey, result.data)) }
-                result.data
-            } else "[]"
-        } else {
-            cachedResponse.response
-        }
-
+    suspend fun getTimeLineDataSets(): List<TimeLineDataSet> = withContext(Dispatchers.IO) {
+        val data = fromCacheOrFetch(timeLinesKey, "[]") { service.fetchHistoricalV2() }
         parser.parseTimeLineDataSets(data)
+    }
+
+    private suspend fun fromCacheOrFetch(cacheKey: String, defaultValue: String, fetchBlock: suspend () -> BaseService.Result): String = coroutineScope {
+        val cachedResponse = cacheDao.getByKey(cacheKey)
+
+        if (cachedResponse != null) {
+            cachedResponse.response
+        } else {
+            val result = fetchBlock.invoke()
+            if (result is BaseService.Result.Success) {
+                launch { cacheDao.insertEntry(Cache(cacheKey, result.data)) }
+                result.data
+            } else {
+                defaultValue
+            }
+        }
     }
 }

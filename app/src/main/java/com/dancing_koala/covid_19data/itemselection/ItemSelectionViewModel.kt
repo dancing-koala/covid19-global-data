@@ -23,7 +23,7 @@ class ItemSelectionViewModel(application: Application) : BaseViewModel(applicati
 
     fun start() {
         viewModelScope.launch {
-            val data = dataRepository.getCountriesTimeLines()
+            val data = dataRepository.getTimeLineDataSets()
             val selectableItems = data.map { it.toSelectableItem() }
 
             println("ItemSelectionViewModel.start $selectableItems")

@@ -7,7 +7,8 @@ class LmaoNinjaApiDataParser {
 
     private val dateFormattedCache = HashMap<String, String>()
 
-    fun parseCountriesData(jsonData: String): List<ReportDataSet> {
+    fun parseReportDataSets(jsonData: String): List<ReportDataSet> {
+        println("LmaoNinjaApiDataParser.parseReportDataSets jsonData=$jsonData")
         val result = mutableListOf<ReportDataSet>()
         val rootJsonArray = JSONArray(jsonData)
 

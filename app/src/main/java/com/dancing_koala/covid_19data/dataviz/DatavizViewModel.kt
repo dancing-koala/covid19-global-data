@@ -37,7 +37,7 @@ class DatavizViewModel(application: Application) : BaseViewModel(application) {
         viewModelScope.launch {
             internalViewStateLiveData.value = ViewState.ShowLoading
 
-            val timeLineDataSets = remoteDataRepository.getCountriesTimeLines()
+            val timeLineDataSets = remoteDataRepository.getTimeLineDataSets()
             dataSets.apply {
                 clear()
                 addAll(timeLineDataSets)
