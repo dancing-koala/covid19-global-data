@@ -8,7 +8,8 @@ import com.dancing_koala.covid_19data.android.BaseViewModel
 import com.dancing_koala.covid_19data.core.ColorPool
 import com.dancing_koala.covid_19data.data.DataCategory
 import com.dancing_koala.covid_19data.data.TimeLineDataSet
-import com.dancing_koala.covid_19data.network.lmaoninja.LmaoNinjaApiRemoteDataRepository
+import com.dancing_koala.covid_19data.network.lmaoninja.LmaoNinjaApiDataRepository
+import com.dancing_koala.covid_19data.network.lmaoninja.LmaoNinjaApiDataRepository.ApiResult
 import kotlinx.coroutines.launch
 import org.kodein.di.generic.instance
 
@@ -23,7 +24,7 @@ class DatavizViewModel(application: Application) : BaseViewModel(application) {
 
     private var currentDataCategory = DataCategory.CASES
 
-    private val remoteDataRepository: LmaoNinjaApiRemoteDataRepository by kodein.instance()
+    private val dataRepository: LmaoNinjaApiDataRepository by kodein.instance()
     private val dataSets = mutableListOf<TimeLineDataSet>()
     private val internalViewStateLiveData = MutableLiveData<ViewState>()
     private val internalSubjectsLiveData = MutableLiveData(
@@ -37,14 +38,20 @@ class DatavizViewModel(application: Application) : BaseViewModel(application) {
         viewModelScope.launch {
             internalViewStateLiveData.value = ViewState.ShowLoading
 
-            val timeLineDataSets = remoteDataRepository.getTimeLineDataSets()
-            dataSets.apply {
-                clear()
-                addAll(timeLineDataSets)
+            val timeLineDataSetsResult = dataRepository.getTimeLineDataSets()
+
+            if (timeLineDataSetsResult is ApiResult.Success) {
+                val timeLineDataSets = timeLineDataSetsResult.value as List<TimeLineDataSet>
+
+                dataSets.apply {
+                    clear()
+                    addAll(timeLineDataSets)
+                }
+
+                val labels = dataSets.first().casesTimeLine.keys.sorted()
+                internalViewStateLiveData.value = ViewState.ShowLabels(labels)
             }
 
-            val labels = dataSets.first().casesTimeLine.keys.sorted()
-            internalViewStateLiveData.value = ViewState.ShowLabels(labels)
 
             internalViewStateLiveData.value = ViewState.HideLoading
         }

@@ -6,7 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.dancing_koala.covid_19data.android.BaseViewModel
 import com.dancing_koala.covid_19data.data.TimeLineDataSet
-import com.dancing_koala.covid_19data.network.lmaoninja.LmaoNinjaApiRemoteDataRepository
+import com.dancing_koala.covid_19data.network.lmaoninja.LmaoNinjaApiDataRepository
+import com.dancing_koala.covid_19data.network.lmaoninja.LmaoNinjaApiDataRepository.ApiResult
 import kotlinx.coroutines.launch
 import org.kodein.di.generic.instance
 import java.util.*
@@ -17,21 +18,23 @@ class ItemSelectionViewModel(application: Application) : BaseViewModel(applicati
         get() = internalViewStateLiveData
 
     private val internalViewStateLiveData = MutableLiveData<ViewState>()
-    private val dataRepository: LmaoNinjaApiRemoteDataRepository by kodein.instance()
+    private val dataRepository: LmaoNinjaApiDataRepository by kodein.instance()
     private val baseItems = mutableListOf<SelectableItem>()
     private val noneItem = SelectableItem(-1, "None")
 
     fun start() {
         viewModelScope.launch {
-            val data = dataRepository.getTimeLineDataSets()
-            val selectableItems = data.map { it.toSelectableItem() }
+            val timeLineDataSetsResult = dataRepository.getTimeLineDataSets()
 
-            println("ItemSelectionViewModel.start $selectableItems")
+            if (timeLineDataSetsResult is ApiResult.Success) {
+                val timeLineDataSets = timeLineDataSetsResult.value as List<TimeLineDataSet>
+                val selectableItems = timeLineDataSets.map { it.toSelectableItem() }
 
-            baseItems.apply {
-                clear()
-                add(noneItem)
-                addAll(selectableItems)
+                baseItems.apply {
+                    clear()
+                    add(noneItem)
+                    addAll(selectableItems)
+                }
             }
 
             onNewSearchQuery("")

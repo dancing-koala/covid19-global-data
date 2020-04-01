@@ -2,6 +2,7 @@ package com.dancing_koala.covid_19data.home
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -49,6 +50,7 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
                 is ViewState.GoToDataviz            -> goToDatavizScreen()
                 ViewState.ShowLoading               -> homeLoadingIndicator.show()
                 ViewState.HideLoading               -> homeLoadingIndicator.hide()
+                ViewState.ShowNetworkError          -> showNetworkError()
             }
         })
 
@@ -112,4 +114,11 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
             homeWorldReportButton.show()
         }
     }
+
+    private fun showNetworkError() =
+        Toast.makeText(
+            this,
+            "There seems to be a problem with the network. Please check your connection and retry",
+            Toast.LENGTH_LONG
+        ).show()
 }

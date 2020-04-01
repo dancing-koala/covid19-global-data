@@ -2,7 +2,7 @@ package com.dancing_koala.covid_19data
 
 import android.app.Application
 import androidx.room.Room
-import com.dancing_koala.covid_19data.network.lmaoninja.LmaoNinjaApiRemoteDataRepository
+import com.dancing_koala.covid_19data.network.lmaoninja.LmaoNinjaApiDataRepository
 import com.dancing_koala.covid_19data.network.lmaoninja.LmaoNinjaApiService
 import com.dancing_koala.covid_19data.persistence.AppDatabase
 import com.dancing_koala.covid_19data.persistence.CacheDao
@@ -22,8 +22,8 @@ class App : Application(), KodeinAware {
         bind<AppDatabase>() with provider { appDb }
         bind<CacheDao>() with provider { appDb.cacheDao() }
         bind<LmaoNinjaApiService>() with singleton { LmaoNinjaApiService() }
-        bind<LmaoNinjaApiRemoteDataRepository>() with provider {
-            LmaoNinjaApiRemoteDataRepository(kodein)
+        bind<LmaoNinjaApiDataRepository>() with provider {
+            LmaoNinjaApiDataRepository(kodein)
         }
     }
 }
