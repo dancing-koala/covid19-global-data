@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Covid-19 Data</string>
+    <string name="app_name">Covid-19 Global Data</string>
     <string name="home_cases_label">cases</string>
     <string name="home_recovered_label">recovered</string>
     <string name="home_deaths_label">deaths</string>

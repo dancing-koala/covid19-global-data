@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/design_default_color_error"
+    android:elevation="@dimen/base_elevation"
     android:orientation="horizontal"
     android:padding="@dimen/base_margin"
     app:layout_constraintTop_toTopOf="parent">
@@ -12,7 +13,8 @@
     <TextView
         android:id="@+id/bannerErrorText"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/base_margin"
         android:text="@string/internet_connection_error_retry"
         android:textColor="@color/primaryLightColor"
         app:layout_constraintBottom_toBottomOf="@id/bannerErrorRetryButton"

@@ -5,20 +5,20 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dancing_koala.covid_19data.R
+import com.dancing_koala.covid_19data.android.BaseActivity
 import kotlinx.android.synthetic.main.activity_item_selection.*
 
-class ItemSelectionActivity : AppCompatActivity() {
+class ItemSelectionActivity : BaseActivity<ItemSelectionViewModel>() {
     companion object {
         const val EXTRA_ITEM_SELECTED = "ItemSelectionActivity.extra.selecte_item"
     }
 
-    private val viewModel: ItemSelectionViewModel by viewModels()
+    override val viewModel: ItemSelectionViewModel by viewModels()
     private val selectableItemAdapter = SelectableItemAdapter { id -> onItemSelected(id) }
 
     @Suppress("UNCHECKED_CAST")
@@ -86,4 +86,7 @@ class ItemSelectionActivity : AppCompatActivity() {
         setResult(Activity.RESULT_CANCELED)
         finish()
     }
+
+    override fun showNetworkError() = Unit
+    override fun hideError() = Unit
 }

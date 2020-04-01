@@ -16,18 +16,17 @@ import org.kodein.di.generic.instance
 class DatavizViewModel(application: Application) : BaseViewModel(application) {
 
     val viewStateLiveData: LiveData<ViewState>
-        get() = internalViewStateLiveData
+        get() = _viewStateLiveData
 
     val subjectsLiveData: LiveData<DataVizCategoryWithSubjects>
-        get() = internalSubjectsLiveData
-
+        get() = _subjectsLiveData
 
     private var currentDataCategory = DataCategory.CASES
 
     private val dataRepository: LmaoNinjaApiDataRepository by kodein.instance()
     private val dataSets = mutableListOf<TimeLineDataSet>()
-    private val internalViewStateLiveData = MutableLiveData<ViewState>()
-    private val internalSubjectsLiveData = MutableLiveData(
+    private val _viewStateLiveData = MutableLiveData<ViewState>()
+    private val _subjectsLiveData = MutableLiveData(
         DataVizCategoryWithSubjects(currentDataCategory, listOf())
     )
 
@@ -36,7 +35,8 @@ class DatavizViewModel(application: Application) : BaseViewModel(application) {
 
     fun start() {
         viewModelScope.launch {
-            internalViewStateLiveData.value = ViewState.ShowLoading
+            _errorLiveData.value = Error.None
+            _viewStateLiveData.value = ViewState.ShowLoading
 
             val timeLineDataSetsResult = dataRepository.getTimeLineDataSets()
 
@@ -49,16 +49,23 @@ class DatavizViewModel(application: Application) : BaseViewModel(application) {
                 }
 
                 val labels = dataSets.first().casesTimeLine.keys.sorted()
-                internalViewStateLiveData.value = ViewState.ShowLabels(labels)
+                _viewStateLiveData.value = ViewState.ShowLabels(labels)
+            } else {
+                when (timeLineDataSetsResult) {
+                    ApiResult.Failure.NetworkError -> _errorLiveData.value = Error.MaybeNoInternet
+                    else                           -> _errorLiveData.value = Error.Unknown
+                }
             }
-
-
-            internalViewStateLiveData.value = ViewState.HideLoading
+            _viewStateLiveData.value = ViewState.HideLoading
         }
     }
 
     fun onAddDataButtonClick() {
-        internalViewStateLiveData.value = if (colorPool.isEmpty) {
+        if (dataSets.isEmpty()) {
+            return
+        }
+
+        _viewStateLiveData.value = if (colorPool.isEmpty) {
             ViewState.MaximumSubjectsReached
         } else {
             ViewState.ShowSelectionScreen
@@ -85,7 +92,7 @@ class DatavizViewModel(application: Application) : BaseViewModel(application) {
     }
 
     private fun notifyNewSelectedSubjects() {
-        internalSubjectsLiveData.value = DataVizCategoryWithSubjects(
+        _subjectsLiveData.value = DataVizCategoryWithSubjects(
             currentDataCategory,
             selectedSubjects.toList()//Pass a copy for safety
         )
@@ -98,6 +105,8 @@ class DatavizViewModel(application: Application) : BaseViewModel(application) {
             notifyNewSelectedSubjects()
         }
     }
+
+    fun onErrorRetryButtonClick() = start()
 
     sealed class ViewState {
         object ShowLoading : ViewState()

@@ -1,69 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:animateLayoutChanges="true"
-    android:clipChildren="false"
-    android:clipToPadding="false"
-    android:padding="@dimen/base_margin">
+    android:animateLayoutChanges="true">
 
-    <TextView
-        android:id="@+id/datavizEmptyText"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/base_margin"
-        android:gravity="center"
-        android:text="@string/dataviz_no_data_text"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/datavizSubjectSlider"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
         android:clipChildren="false"
         android:clipToPadding="false"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/item_dataviz_subject" />
+        android:padding="@dimen/base_margin">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/datavizDataCategorySpinnerCard"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/base_margin"
-        app:cardBackgroundColor="@color/primaryColor"
-        app:cardCornerRadius="@dimen/base_cardview_corner_radius"
-        app:contentPadding="@dimen/base_margin_xxs"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/datavizSubjectSlider">
+        <TextView
+            android:id="@+id/datavizEmptyText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/base_margin"
+            android:gravity="center"
+            android:text="@string/dataviz_no_data_text"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline4"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <Spinner
-            android:id="@+id/datavizDataCategorySpinner"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/datavizSubjectSlider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:listitem="@layout/item_dataviz_subject" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/datavizDataCategorySpinnerCard"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/base_margin"
+            app:cardBackgroundColor="@color/primaryColor"
+            app:cardCornerRadius="@dimen/base_cardview_corner_radius"
+            app:contentPadding="@dimen/base_margin_xxs"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/datavizSubjectSlider">
 
-    </androidx.cardview.widget.CardView>
+            <Spinner
+                android:id="@+id/datavizDataCategorySpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/datavizAdvice"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/base_margin"
-        android:text="@string/dataviz_advice"
-        app:layout_constraintBottom_toBottomOf="@id/datavizDataCategorySpinnerCard"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/datavizDataCategorySpinnerCard"
-        app:layout_constraintTop_toTopOf="@id/datavizDataCategorySpinnerCard" />
+        </androidx.cardview.widget.CardView>
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/datavizLineChart"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="@dimen/base_margin"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/datavizDataCategorySpinnerCard" />
+        <TextView
+            android:id="@+id/datavizAdvice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/base_margin"
+            android:text="@string/dataviz_advice"
+            app:layout_constraintBottom_toBottomOf="@id/datavizDataCategorySpinnerCard"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/datavizDataCategorySpinnerCard"
+            app:layout_constraintTop_toTopOf="@id/datavizDataCategorySpinnerCard" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/datavizLineChart"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/base_margin"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/datavizDataCategorySpinnerCard" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <include
+        layout="@layout/component_error_banner"
+        android:visibility="gone" />
+</FrameLayout>

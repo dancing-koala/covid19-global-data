@@ -3,12 +3,12 @@ package com.dancing_koala.covid_19data.home
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import com.dancing_koala.covid_19data.R
 import com.dancing_koala.covid_19data.ReportClusterItem
 import com.dancing_koala.covid_19data.ReportClusterRenderer
+import com.dancing_koala.covid_19data.android.BaseActivity
 import com.dancing_koala.covid_19data.android.hide
 import com.dancing_koala.covid_19data.android.show
 import com.dancing_koala.covid_19data.data.ReportDataSet
@@ -22,9 +22,9 @@ import com.google.maps.android.clustering.ClusterManager
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.component_error_banner.*
 
-class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
+class HomeActivity : BaseActivity<HomeViewModel>(), OnMapReadyCallback {
 
-    private val viewModel: HomeViewModel by viewModels()
+    override val viewModel: HomeViewModel by viewModels()
 
     private var googleMap: GoogleMap? = null
     private lateinit var clusterManager: ClusterManager<ReportClusterItem>
@@ -52,8 +52,6 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
                 is ViewState.GoToDataviz            -> goToDatavizScreen()
                 ViewState.ShowLoading               -> homeLoadingIndicator.show()
                 ViewState.HideLoading               -> homeLoadingIndicator.hide()
-                ViewState.ShowNetworkError          -> showNetworkError()
-                ViewState.HideNetworkError          -> hideNetworkError()
             }
         })
 
@@ -117,8 +115,4 @@ class HomeActivity : AppCompatActivity(), OnMapReadyCallback {
             homeWorldReportButton.show()
         }
     }
-
-    private fun showNetworkError() = bannerError.show()
-
-    private fun hideNetworkError() = bannerError.hide()
 }

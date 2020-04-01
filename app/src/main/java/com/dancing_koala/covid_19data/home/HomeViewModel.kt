@@ -14,12 +14,12 @@ import org.kodein.di.generic.instance
 class HomeViewModel(application: Application) : BaseViewModel(application) {
 
     val reportsLiveData: LiveData<List<ReportDataSet>>
-        get() = internalReportsLiveData
+        get() = _reportsLiveData
 
     val viewStateLiveData: LiveData<ViewState>
         get() = _viewStateLiveData
 
-    private val internalReportsLiveData = MutableLiveData<List<ReportDataSet>>()
+    private val _reportsLiveData = MutableLiveData<List<ReportDataSet>>(listOf())
     private val _viewStateLiveData = MutableLiveData<ViewState>()
     private val dataRepository: LmaoNinjaApiDataRepository by kodein.instance()
 
@@ -27,15 +27,15 @@ class HomeViewModel(application: Application) : BaseViewModel(application) {
 
     fun start() {
         viewModelScope.launch {
+            _errorLiveData.value = Error.None
             _viewStateLiveData.value = ViewState.ShowLoading
 
             val reportDataSetsResult = dataRepository.getReportDataSets()
 
             if (reportDataSetsResult is ApiResult.Success) {
-                _viewStateLiveData.value = ViewState.HideNetworkError
                 val reportDataSets = reportDataSetsResult.value as List<ReportDataSet>
 
-                internalReportsLiveData.value = reportDataSets
+                _reportsLiveData.value = reportDataSets
 
                 if (reportDataSets.isNotEmpty()) {
                     worldReport = reportDataSets.first { it.id == 0 }
@@ -43,10 +43,8 @@ class HomeViewModel(application: Application) : BaseViewModel(application) {
                 }
             } else {
                 when (reportDataSetsResult) {
-                    ApiResult.Failure.NetworkError    -> _viewStateLiveData.value = ViewState.ShowNetworkError
-                    is ApiResult.Failure.UnknownError -> {
-                        _viewStateLiveData.value = ViewState.ShowUnknownError
-                    }
+                    ApiResult.Failure.NetworkError    -> _errorLiveData.value = Error.MaybeNoInternet
+                    is ApiResult.Failure.UnknownError -> _errorLiveData.value = Error.Unknown
                 }
             }
 
@@ -55,6 +53,9 @@ class HomeViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun onDatavizButtonClick() {
+        if(_reportsLiveData.value?.isEmpty() != false) {
+            return
+        }
         _viewStateLiveData.value = ViewState.GoToDataviz
     }
 
@@ -63,7 +64,7 @@ class HomeViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun onMapItemClick(itemId: Int) {
-        internalReportsLiveData.value?.firstOrNull { it.id == itemId }?.let {
+        _reportsLiveData.value?.firstOrNull { it.id == itemId }?.let {
             _viewStateLiveData.value = ViewState.UpdateMainReportValues(it)
         }
     }
@@ -75,8 +76,5 @@ class HomeViewModel(application: Application) : BaseViewModel(application) {
         object GoToDataviz : ViewState()
         object ShowLoading : ViewState()
         object HideLoading : ViewState()
-        object ShowNetworkError : ViewState()
-        object HideNetworkError : ViewState()
-        object ShowUnknownError : ViewState()
     }
 }

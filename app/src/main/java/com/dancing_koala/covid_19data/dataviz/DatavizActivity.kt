@@ -12,15 +12,11 @@ import android.widget.BaseAdapter
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dancing_koala.covid_19data.R
-import com.dancing_koala.covid_19data.android.ColoredChipAdapter
-import com.dancing_koala.covid_19data.android.ColoredChipItem
-import com.dancing_koala.covid_19data.android.hide
-import com.dancing_koala.covid_19data.android.show
+import com.dancing_koala.covid_19data.android.*
 import com.dancing_koala.covid_19data.data.DataCategory
 import com.dancing_koala.covid_19data.dataviz.DatavizViewModel.ViewState
 import com.dancing_koala.covid_19data.itemselection.ItemSelectionActivity
@@ -30,17 +26,18 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
 import kotlinx.android.synthetic.main.activity_dataviz.*
+import kotlinx.android.synthetic.main.component_error_banner.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
+class DatavizActivity : BaseActivity<DatavizViewModel>(), ColoredChipAdapter.Callback {
     companion object {
         const val SELECTION_REQUEST_CODE = 123
     }
 
     private val simpleChipAdapter = ColoredChipAdapter(this)
 
-    private val viewModel: DatavizViewModel by viewModels()
+    override val viewModel: DatavizViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +49,8 @@ class DatavizActivity : AppCompatActivity(), ColoredChipAdapter.Callback {
             setHomeAsUpIndicator(R.drawable.ic_close)
             title = getString(R.string.dataviz_screen_title)
         }
+
+        bannerErrorRetryButton.setOnClickListener { viewModel.onErrorRetryButtonClick() }
 
         setUpChart()
         setUpViewModel()
