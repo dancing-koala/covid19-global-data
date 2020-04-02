@@ -53,13 +53,13 @@ class HomeViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun onDatavizButtonClick() {
-        if(_reportsLiveData.value?.isEmpty() != false) {
+        if (_reportsLiveData.value?.isEmpty() != false) {
             return
         }
         _viewStateLiveData.value = ViewState.GoToDataviz
     }
 
-    fun onWorldReportButtonClick() {
+    fun onGlobalReportButtonClick() {
         _viewStateLiveData.value = ViewState.UpdateMainReportValues(worldReport)
     }
 
@@ -70,6 +70,10 @@ class HomeViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun onErrorRetryButtonClick() = start()
+
+    fun onMenuItemsCreated() {
+        _errorLiveData.value = errorLiveData.value
+    }
 
     sealed class ViewState {
         class UpdateMainReportValues(val report: ReportDataSet) : ViewState()

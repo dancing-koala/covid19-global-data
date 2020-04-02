@@ -2,8 +2,9 @@ package com.dancing_koala.covid_19data.home
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.viewModels
-import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import com.dancing_koala.covid_19data.R
 import com.dancing_koala.covid_19data.ReportClusterItem
@@ -28,6 +29,8 @@ class HomeActivity : BaseActivity<HomeViewModel>(), OnMapReadyCallback {
 
     private var googleMap: GoogleMap? = null
     private lateinit var clusterManager: ClusterManager<ReportClusterItem>
+    private var chartActionItem: MenuItem? = null
+    private var globalActionItem: MenuItem? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,18 +39,13 @@ class HomeActivity : BaseActivity<HomeViewModel>(), OnMapReadyCallback {
         val mapFragment: SupportMapFragment? = supportFragmentManager.findFragmentById(R.id.homeMapFragment) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
 
-        homeDatavizButton.setOnClickListener { viewModel.onDatavizButtonClick() }
-
-        homeWorldReportButton.setOnClickListener { viewModel.onWorldReportButtonClick() }
-        homeWorldReportButton.hide()
-
         bannerErrorRetryButton.setOnClickListener { viewModel.onErrorRetryButtonClick() }
 
         viewModel.viewStateLiveData.observe(this, Observer {
             when (it) {
                 is ViewState.UpdateMainReportValues -> with(it.report) {
                     updateCounters(country.name, cases, deaths, recovered)
-                    updateWorldReportButtonVisibility(reportDataSet = this)
+                    updateGlobalActionState(reportDataSet = this)
                 }
                 is ViewState.GoToDataviz            -> goToDatavizScreen()
                 ViewState.ShowLoading               -> homeLoadingIndicator.show()
@@ -58,7 +56,38 @@ class HomeActivity : BaseActivity<HomeViewModel>(), OnMapReadyCallback {
         viewModel.start()
     }
 
-    private fun goToDatavizScreen() = startActivity(Intent(this, DatavizActivity::class.java))
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.home_menu, menu)
+
+        menu?.let {
+            chartActionItem = it.findItem(R.id.homeMenuChartAction)
+            globalActionItem = it.findItem(R.id.homeMenuGlobalAction)
+        }
+
+        viewModel.onMenuItemsCreated()
+
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.homeMenuGlobalAction -> true.also { viewModel.onGlobalReportButtonClick() }
+            R.id.homeMenuChartAction  -> true.also { viewModel.onDatavizButtonClick() }
+            else                      -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun showNetworkError() {
+        super.showNetworkError()
+        chartActionItem?.setState(enabled = false)
+        globalActionItem?.setState(enabled = false)
+    }
+
+    override fun hideError() {
+        super.hideError()
+        chartActionItem?.setState(enabled = true)
+        globalActionItem?.setState(enabled = true)
+    }
 
     override fun onMapReady(map: GoogleMap?) {
         map?.let { validMap ->
@@ -85,6 +114,8 @@ class HomeActivity : BaseActivity<HomeViewModel>(), OnMapReadyCallback {
         }
     }
 
+    private fun goToDatavizScreen() = startActivity(Intent(this, DatavizActivity::class.java))
+
     private fun updateMarkers(data: List<ReportDataSet>) {
         googleMap ?: return
 
@@ -106,13 +137,16 @@ class HomeActivity : BaseActivity<HomeViewModel>(), OnMapReadyCallback {
         homeDeathsCountTextView.text = deaths.toString()
     }
 
-    private fun updateWorldReportButtonVisibility(reportDataSet: ReportDataSet) {
-        if (reportDataSet.id == 0) {
-            if (homeWorldReportButton.isVisible) {
-                homeWorldReportButton.hide()
-            }
-        } else if (!homeWorldReportButton.isVisible) {
-            homeWorldReportButton.show()
+    private fun updateGlobalActionState(reportDataSet: ReportDataSet) {
+        globalActionItem?.apply {
+            setState(enabled = !reportDataSet.isGlobalReport())
         }
+    }
+
+    private fun ReportDataSet.isGlobalReport() = id == 0
+
+    private fun MenuItem.setState(enabled: Boolean) {
+        isEnabled = enabled
+        icon?.alpha = if (enabled) 255 else 64
     }
 }

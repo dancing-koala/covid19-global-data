@@ -12,129 +12,153 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/homeCountersContainer"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.cardview.widget.CardView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/homeCountersContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/base_margin_s"
-        android:layout_marginBottom="@dimen/base_margin_xl"
-        app:cardCornerRadius="@dimen/base_cardview_corner_radius"
-        app:contentPadding="@dimen/base_margin"
+        android:background="@color/primaryColor"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:padding="@dimen/base_margin"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <TextView
+            android:id="@+id/homeDataSetNameTextView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/base_margin_xs"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+            android:textColor="@color/primaryTextColor"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Worldwide" />
 
-            <TextView
-                android:id="@+id/homeDataSetNameTextView"
-                android:layout_width="0dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
-                android:textColor="@color/primaryTextColor"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Worldwide" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/homeCountersContainerThird"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".3333" />
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/homeCountersContainerThird"
-                android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/homeCountersContainerTwoThird"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".6666" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/base_margin"
+            android:layout_marginEnd="@dimen/base_margin_xxs"
+            app:cardCornerRadius="@dimen/base_cardview_corner_radius"
+            app:layout_constraintEnd_toStartOf="@id/homeCountersContainerThird"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/homeDataSetNameTextView">
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent=".3333" />
+                android:padding="@dimen/base_margin_xs">
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/homeCountersContainerTwoThird"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/homeCasesLabelTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/home_cases_label"
+                    android:textColor="@color/secondaryTextColor" />
+
+                <TextView
+                    android:id="@+id/homeCasesCountTextView"
+                    style="@style/AppTheme.HomeScreen.Counter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/confirmed"
+                    tools:text="123456789" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/base_margin_xxs"
+            android:layout_marginTop="@dimen/base_margin"
+            app:cardCornerRadius="@dimen/base_cardview_corner_radius"
+            app:layout_constraintEnd_toStartOf="@id/homeCountersContainerTwoThird"
+            app:layout_constraintStart_toEndOf="@id/homeCountersContainerThird"
+            app:layout_constraintTop_toBottomOf="@id/homeDataSetNameTextView">
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent=".6666" />
+                android:padding="@dimen/base_margin_xs">
 
-            <TextView
-                android:id="@+id/homeCasesLabelTextView"
-                android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/homeRecoveredLabelTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/home_recovered_label"
+                    android:textColor="@color/secondaryTextColor"
+                    app:layout_constraintStart_toStartOf="@id/homeCountersContainerThird"
+                    app:layout_constraintTop_toTopOf="@id/homeCasesLabelTextView" />
+
+                <TextView
+                    android:id="@+id/homeRecoveredCountTextView"
+                    style="@style/AppTheme.HomeScreen.Counter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/recovered"
+                    app:layout_constraintStart_toStartOf="@id/homeRecoveredLabelTextView"
+                    app:layout_constraintTop_toBottomOf="@id/homeRecoveredLabelTextView"
+                    tools:text="123456789" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/base_margin_xxs"
+            android:layout_marginTop="@dimen/base_margin"
+            app:cardCornerRadius="@dimen/base_cardview_corner_radius"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/homeCountersContainerTwoThird"
+            app:layout_constraintTop_toBottomOf="@id/homeDataSetNameTextView">
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/base_margin"
-                android:layout_marginEnd="@dimen/base_margin"
-                android:text="@string/home_cases_label"
-                android:textColor="@color/secondaryTextColor"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/homeDataSetNameTextView" />
+                android:orientation="vertical"
+                android:padding="@dimen/base_margin_xs">
 
-            <TextView
-                android:id="@+id/homeCasesCountTextView"
-                style="@style/AppTheme.HomeScreen.Counter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/confirmed"
-                app:layout_constraintStart_toStartOf="@id/homeCasesLabelTextView"
-                app:layout_constraintTop_toBottomOf="@id/homeCasesLabelTextView"
-                tools:text="1233456789" />
+                <TextView
+                    android:id="@+id/homeDeathsLabelTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/home_deaths_label"
+                    android:textColor="@color/secondaryTextColor"
+                    app:layout_constraintStart_toStartOf="@id/homeCountersContainerTwoThird"
+                    app:layout_constraintTop_toTopOf="@id/homeCasesLabelTextView" />
 
-            <TextView
-                android:id="@+id/homeRecoveredLabelTextView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="@string/home_recovered_label"
-                android:textColor="@color/secondaryTextColor"
-                app:layout_constraintStart_toStartOf="@id/homeCountersContainerThird"
-                app:layout_constraintTop_toTopOf="@id/homeCasesLabelTextView" />
+                <TextView
+                    android:id="@+id/homeDeathsCountTextView"
+                    style="@style/AppTheme.HomeScreen.Counter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/death"
+                    app:layout_constraintStart_toStartOf="@id/homeDeathsLabelTextView"
+                    app:layout_constraintTop_toBottomOf="@id/homeDeathsLabelTextView"
+                    tools:text="123456789" />
 
-            <TextView
-                android:id="@+id/homeRecoveredCountTextView"
-                style="@style/AppTheme.HomeScreen.Counter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/recovered"
-                app:layout_constraintStart_toStartOf="@id/homeRecoveredLabelTextView"
-                app:layout_constraintTop_toBottomOf="@id/homeRecoveredLabelTextView"
-                tools:text="1233456789" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
-            <TextView
-                android:id="@+id/homeDeathsLabelTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/home_deaths_label"
-                android:textColor="@color/secondaryTextColor"
-                app:layout_constraintStart_toStartOf="@id/homeCountersContainerTwoThird"
-                app:layout_constraintTop_toTopOf="@id/homeCasesLabelTextView" />
-
-            <TextView
-                android:id="@+id/homeDeathsCountTextView"
-                style="@style/AppTheme.HomeScreen.Counter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/death"
-                app:layout_constraintStart_toStartOf="@id/homeDeathsLabelTextView"
-                app:layout_constraintTop_toBottomOf="@id/homeDeathsLabelTextView"
-                tools:text="1233456789" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.cardview.widget.CardView>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/homeDatavizButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/base_margin"
-        app:layout_constraintBottom_toTopOf="@id/homeCountersContainer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_timeline" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/homeWorldReportButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/base_margin"
-        app:layout_constraintBottom_toTopOf="@id/homeCountersContainer"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/ic_language" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/homeLoadingIndicator"
@@ -172,8 +196,7 @@
 
     <include
         layout="@layout/component_error_banner"
-        android:visibility="gone"
-        tools:visibility="visible" />
+        android:visibility="gone" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

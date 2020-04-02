@@ -9,19 +9,6 @@
         <item name="colorOnSecondary">@color/secondaryTextColor</item>
     </style>
 
-    <style name="AppTheme.NoActionBar" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="colorPrimary">@color/primaryColor</item>
-        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
-        <item name="colorOnPrimary">@color/primaryTextColor</item>
-        <item name="colorAccent">@color/primaryDarkColor</item>
-        <item name="colorSecondary">@color/secondaryColor</item>
-        <item name="colorOnSecondary">@color/secondaryTextColor</item>
-    </style>
-
-    <style name="AppTheme.NoActionBarScreen" parent="AppTheme.NoActionBar" />
-
-    <style name="AppTheme.HomeScreen" parent="AppTheme.NoActionBarScreen" />
-
     <style name="AppTheme.HomeScreen.Counter" parent="TextAppearance.MaterialComponents.Headline5">
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">20sp</item>
